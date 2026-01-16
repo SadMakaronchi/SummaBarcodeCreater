@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingCutSumma", "SettingCutSumma\SettingCutSumma.csproj", "{3323BEB5-0E44-4851-8EE6-8A7EB807DAAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		2024 Debug|Any CPU = 2024 Debug|Any CPU
+		2024 Release|Any CPU = 2024 Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3323BEB5-0E44-4851-8EE6-8A7EB807DAAA}.2024 Debug|Any CPU.ActiveCfg = 2024 Debug|Any CPU
+		{3323BEB5-0E44-4851-8EE6-8A7EB807DAAA}.2024 Debug|Any CPU.Build.0 = 2024 Debug|Any CPU
+		{3323BEB5-0E44-4851-8EE6-8A7EB807DAAA}.2024 Release|Any CPU.ActiveCfg = 2024 Release|Any CPU
+		{3323BEB5-0E44-4851-8EE6-8A7EB807DAAA}.2024 Release|Any CPU.Build.0 = 2024 Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E680C8C2-47E6-4D91-80B8-AD9761B03336}
+	EndGlobalSection
+EndGlobal
