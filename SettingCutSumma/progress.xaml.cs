@@ -16,21 +16,23 @@ using System.Windows.Shapes;
 
 
 
+
 namespace SettingCutSumma
 {
    
 
     public partial class progress : Window
     {
-        
+       
         public progress()
         {
             InitializeComponent();
+            
         }
-        
 
-        
        
+
+
 
     }
 }

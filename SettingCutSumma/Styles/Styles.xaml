@@ -37,6 +37,9 @@
         <Setter Property="Foreground" Value="{DynamicResource Default.Static.Foreground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Button.Static.Border}"/>
     </Style>
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource Default.Static.Foreground}"/>
+    </Style>
     <Style TargetType="Label">
         <Setter Property="Foreground" Value="{DynamicResource Default.Static.Foreground}"/>
 
@@ -52,7 +55,6 @@
 
     <Style TargetType="Expander">
         <Setter Property="Foreground" Value="{DynamicResource Default.Static.Foreground}"/>
-
     </Style>
 
 
