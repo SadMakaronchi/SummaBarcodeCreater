@@ -11,8 +11,8 @@
     <ProjectGuid>{3323BEB5-0E44-4851-8EE6-8A7EB807DAAA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SettingCutSumma</RootNamespace>
-    <AssemblyName>SettingCutSumma</AssemblyName>
+    <RootNamespace>SummaMetki</RootNamespace>
+    <AssemblyName>SummaMetki</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

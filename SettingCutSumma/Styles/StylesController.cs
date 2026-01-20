@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SettingCutSumma.Styles
+namespace SummaMetki.Styles
 {
     public class StylesController
     {

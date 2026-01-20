@@ -1,11 +1,11 @@
-﻿<Window x:Class="SettingCutSumma.MainWindow"
+﻿<Window x:Class="SummaMetki.MainWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SettingCutSumma"
              mc:Ignorable="d" 
-             MinWidth="285" Loaded="UserControl_Loaded" Width="250" Height="400" WindowStyle="ToolWindow" ResizeMode="NoResize" Title="Настройки файла резки">
+             MinWidth="285" Loaded="UserControl_Loaded" Width="330" Height="540" WindowStyle="ToolWindow" ResizeMode="NoResize" Title="Настройки файла резки" Topmost="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -16,15 +16,15 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="0,0,0,0">
-        <StackPanel>
-           <ComboBox Name="Velosity" Width="60" Margin="118,15,0,0" HorizontalAlignment="Left"/>
-           <ComboBox Name="Overcut" Width="60" Margin="118,6,0,0" HorizontalAlignment="Left"/>
-           <TextBlock Text="Скорость резки" Margin="15,-50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <TextBlock Text="Перерез кривой" Margin="15,-22,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <TextBlock Text="Размытие кривой" Margin="15,7,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <CheckBox Name="Smothing" Margin="118,-15,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
-        </StackPanel>
+        <ComboBox Name="Velosity" Width="60" Height="20" Margin="130,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <ComboBox Name="Overcut" Width="60" Height="20" Margin="130,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+           <TextBlock Text="Скорость резки" Margin="20,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+           <TextBlock Text="Перерез кривой" Margin="20,44,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+           <TextBlock Text="Размытие кривой" Margin="20,71,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+           <CheckBox Name="Smothing" Margin="130,73,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Image Name="preview" Margin ="10,101,10,10"  Stretch="Uniform" SnapsToDevicePixels="True" Height="390" Width="300"  RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Top"/>
+        
     </Grid>
 
 

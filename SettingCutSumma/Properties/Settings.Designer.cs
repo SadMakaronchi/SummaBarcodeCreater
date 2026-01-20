@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SettingCutSumma.Properties {
+namespace SummaMetki.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

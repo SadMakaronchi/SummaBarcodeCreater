@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 
 
 
-namespace SettingCutSumma
+namespace SummaMetki
 {
    
 
