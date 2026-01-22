@@ -18,6 +18,15 @@ namespace SummaMetki
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Guid("b3f7d9a3-02f6-4259-9b13-28c2c8070cfa")]
+
+    public class Settings_cut
+    {
+        public string path_plt { get; set; }
+        public int velosity { get; set; } = 0;
+        public bool barc2 { get; set; }
+        public double overcut { get; set; }
+        public bool smothing { get; set; }
+    }
     public class Entry
     {
         public corel.Application corelApp;
@@ -25,13 +34,7 @@ namespace SummaMetki
         {
             corelApp = app;
         }
-        public class Settings_cut
-        {
-            public string path_plt { get; set; } = @"C:\РЕЗКА\";
-            public int velosity { get; set; } = 600;
-            public bool barc2 { get; set; } = true;
-            public double overcut { get; set; } = 0.1;       
-        }
+        
 
 
         public corel.Application crl = new corel.Application();
@@ -39,13 +42,7 @@ namespace SummaMetki
         {
             
             
-                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"SummaPanel", "SettingsCutSumma.xml");
-                using (FileStream fs = File.Create(path))
-                {
-                    XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
-                    var settings = new Settings_cut();
-                    xsz.Serialize(fs,settings);
-                }
+                
             
 
             

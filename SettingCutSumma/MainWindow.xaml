@@ -17,14 +17,17 @@
     </Window.Resources>
     <Grid Margin="0,0,0,0">
 
-        <ComboBox Name="Velosity" Width="60" Height="20" Margin="130,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <ComboBox Name="Overcut" Width="60" Height="20" Margin="130,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <TextBlock Text="Скорость резки" Margin="20,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <TextBlock Text="Перерез кривой" Margin="20,44,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <TextBlock Text="Размытие кривой" Margin="20,71,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-           <CheckBox Name="Smothing" Margin="130,73,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <Image Name="preview" Margin ="10,101,10,10"  Stretch="Uniform" SnapsToDevicePixels="True" Height="390" Width="300"  RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Top"/>
-        
+        <ComboBox Name="Velosity" Width="60" Height="20" Margin="115,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <ComboBox Name="Overcut" Width="60" Height="20" Margin="115,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Text="Скорость резки" Margin="20,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Text="Перерез кривой" Margin="20,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Text="Размытие кривой" Margin="45,71,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Text="Добавление второго баркода" Margin="45,91,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <CheckBox Name="Smothing" Margin="20,73,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <CheckBox Name="Barcode2" Margin="20,93,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Name="PathCon" Margin="20,113,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Путь сохранения файла резки:"/>
+        <TextBox Name="Path" Margin="20,133,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="20"/>
+        <Button Name="PathButton" Margin="0,133,20,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="80" Height="20" Content="Выбрать"/>
     </Grid>
 
 

@@ -249,9 +249,6 @@
     <Reference Include="System.Xaml" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="UglyToad.PdfPig, Version=0.0.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PdfPig.0.0.9\lib\net47\UglyToad.PdfPig.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
@@ -330,9 +327,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\AdobeFontMetrics\MustRead.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

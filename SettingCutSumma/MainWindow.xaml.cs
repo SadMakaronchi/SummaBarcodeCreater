@@ -43,61 +43,11 @@ namespace SummaMetki
             {
                 global::System.Windows.MessageBox.Show("VGCore Erro");
             }
-            if (corelApp.ActiveDocument != null)
-            {
-                update_preview();
-            }
+           
+        }
 
             
-            corelApp.SelectionChange += CorelApp_SelectionChange;
-            void CorelApp_SelectionChange()
-            {
-                update_preview();
-            }
-            corelApp.ActiveDocument.ShapeChange += ActiveDocument_ShapeChange;
-            void ActiveDocument_ShapeChange(corel.Shape Shape, cdrShapeChangeScope Scope)
-            {
-                update_preview();
-            }
            
-
-
-                void update_preview()
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        ShapeRange sel = corelApp.ActiveSelectionRange;
-
-                        if (sel == null || sel.Count == 0)
-                        {
-                            preview.Source = null;
-                        }
-
-                        else
-                        {
-                            string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", $"preview_{Guid.NewGuid()}.png");
-                            ExportFilter exbtmp = corelApp.ActiveDocument.ExportBitmap(path, cdrFilter.cdrPNG, cdrExportRange.cdrSelection, cdrImageType.cdrRGBColorImage);
-                            exbtmp.Finish();
-                            var bmp = new System.Windows.Media.Imaging.BitmapImage();
-                            bmp.BeginInit();
-                            bmp.UriSource = new Uri(path);
-                            bmp.CacheOption = BitmapCacheOption.OnLoad;
-                            bmp.EndInit();
-                            bmp.Freeze();
-                            preview.Source = bmp;
-                            File.Delete(path);
-
-                        }
-
-                    });
-                }
-                this.Closed += (s, e) =>
-                {
-                    corelApp.SelectionChange -= CorelApp_SelectionChange;
-                    corelApp.ActiveDocument.ShapeChange -= ActiveDocument_ShapeChange;
-                   
-                };
-            }
 
        
 
