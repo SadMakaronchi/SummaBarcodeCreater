@@ -127,8 +127,11 @@ namespace SummaMetki
             corelApp.ActiveDocument.BeginCommandGroup("Добавление меток и баркодов для " + name);
             corelApp.ActiveDocument.Unit = corel.cdrUnit.cdrMillimeter;
             Boolean barc2 = true;
-            long nbr1;
-            long nbr2;
+            long nbr;
+            Random rnd = new Random();// генерируем рандомное число
+            long barnmbr = rnd.Next(1_000_000, 10_000_000) * 1000L + rnd.Next(0, 1000);
+
+
 
             //тут создаём рабочие слои
 
@@ -149,6 +152,8 @@ namespace SummaMetki
             Layer metk_sum = corelApp.ActiveDocument.ActivePage.Layers["метки summa"];
             Layer metk_g = corelApp.ActiveDocument.ActivePage.Layers.Find("метки для гильотины");
             Layer brk = corelApp.ActivePage.CreateLayer("баркод");
+
+
             //ищем контур по имени спотового цвета абриса
             ShapeRange cut = corelApp.ActiveDocument.ActivePage.Shapes.FindShapes(Query: "@outline.color.name='CutContour'");
             cut.MoveToLayer(rzk);
@@ -156,10 +161,7 @@ namespace SummaMetki
             {
                 s.BreakApart();
             }
-            ShapeRange cut_next = rzk.Shapes.All();
-            cut_next.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX");
-            Shape cutfnsh = cut_next.Combine();
-            cutfnsh.BreakApart();
+            
 
             prnt.Shapes.All().CreateSelection();
             rzk.Shapes.All().AddToSelection();
@@ -190,39 +192,51 @@ namespace SummaMetki
                 gilmt = 0;
             }
 
-            for (int q = 0; q < metk_y + 1; q++)
+            for (int q = 0; q < metk_y + 1; q++) // отрисовка меток OPOS
             {
-                Shape met = metk_sum.CreateRectangle(r.LeftX - 11 - gilmt - zps, r.BottomY - 13 + q * step_y, r.LeftX - 8 - gilmt - zps, r.BottomY - 16 + q * step_y);
-                met.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
-                met.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
-                Shape met2 = metk_sum.CreateRectangle(r.RightX + 11 + gilmt, r.BottomY - 13 + q * step_y, r.RightX + 8 + gilmt, r.BottomY - 16 + q * step_y);
-                met2.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
-                met2.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                Shape met0 = metk_sum.CreateRectangle(r.LeftX - 11 - gilmt - zps, r.BottomY - 13 + q * step_y, r.LeftX - 8 - gilmt - zps, r.BottomY - 16 + q * step_y);
+                met0.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
+                met0.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                Shape met1 = metk_sum.CreateRectangle(r.RightX + 11 + gilmt, r.BottomY - 13 + q * step_y, r.RightX + 8 + gilmt, r.BottomY - 16 + q * step_y);
+                met1.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
+                met1.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
             }
-            Shape met3 = metk_sum.CreateRectangle(r.LeftX - zps, r.BottomY - 13, r.RightX, r.BottomY - 16);
-            met3.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
-            met3.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
-            Shape met4 = null;
-            BarcodeEdit();
-            if (barc2 == true)
-            {
-                met4 = metk_sum.CreateRectangle(r.LeftX - zps, r.TopY + 16, r.RightX, r.TopY + 13);
-                met4.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
-                met4.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
-                BarcodeEdit();
-            }
-
+            ShapeRange oposAndBar = corelApp.ActiveDocument.CreateShapeRangeFromArray();
+            Shape met;
+            oposAndBar = Create_OPOS_XY("6");// вызов отрисовки нижней метки OPOS_XY и баркода
             int n_met = metk_y + 1;
             int x_dis = (int)Math.Round(step_y / 0.025);
-            int y_dis = (int)Math.Round((met3.SizeWidth + 20 + 3) / 0.025);
-
-            void BarcodeEdit()
+            int y_dis = (int)Math.Round((oposAndBar.SizeWidth + 20 + 3) / 0.025);
+            ExportCut();
+            corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(-270); // возвращаем исходное положение
+            if (barc2 == true) //проверка нужен ли второй баркод
+                {
+                oposAndBar = Create_OPOS_XY("9"); // повторно отрисовываем нижнюю метку, если выбран второй баркод
+                oposAndBar.Rotate(180);
+                oposAndBar.TopY = metk_sum.Shapes.All().TopY;
+                corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(180);
+                rzk.Shapes.All().BreakApart();
+                rzk.Shapes.All().Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX");
+                rzk.Shapes.All().Combine();
+                rzk.Shapes.All().BreakApart();
+                ExportCut();
+                corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(270);
+                }
+            
+            ShapeRange Create_OPOS_XY(string n)
             {
-                Random rnd = new Random();
-                long barnmbr = rnd.Next(1_000_000, 10_000_000) * 1000L + rnd.Next(0, 1000);
+                met = metk_sum.CreateRectangle(r.LeftX - zps, r.BottomY - 13, r.RightX, r.BottomY - 16); // отрисовка нижней метки OPOS_XY
+                met.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
+                met.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                oposAndBar = BarcodeEdit(n);
+                oposAndBar.Add(met);
+                return oposAndBar;
+            }
+            
+            ShapeRange BarcodeEdit(string n) // создаём штрихкод
+            {
+                nbr = long.Parse(n + barnmbr); // имя plt файла и подпись
 
-                nbr1 = long.Parse("6" + barnmbr);
-                nbr2 = long.Parse("9" + barnmbr);
                 int CalcCheckDigit(long number)
                 {
                     int sum = number.ToString()
@@ -230,47 +244,39 @@ namespace SummaMetki
                                    .Sum(c => c - '0');
                     return (10 - (sum % 10)) % 10;
                 }
-                int nm1 = CalcCheckDigit(nbr1);
-                int nm2 = CalcCheckDigit(nbr2);
-                string bar1 = nbr1.ToString() + nm1;
-                string bar2 = nbr2.ToString() + nm2;
+                int nm = CalcCheckDigit(nbr);
+                string bar = nbr.ToString() + nm; // число баркода с проверочной цифрой
                 var barcode_create = new BarcodeCreater();
-                
                 barcode_create.Init(corelApp);
-                barcode_create.Create(brk, met3, met4, bar1, bar2);
-                Shape podp1 = brk.CreateArtisticText(met3.RightX - 242, met3.TopY + 3, nbr1.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
-                podp1.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
-                podp1.ConvertToCurves();
-                if (barc2 == true)
-                {
-                    Shape podp2 = brk.CreateArtisticText(met4.LeftX + 216, met4.BottomY - 6, nbr2.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
-                    podp2.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
-                    podp2.ConvertToCurves();
-                    podp2.Rotate(180);
-                }
+                ShapeRange barshape = barcode_create.Create(brk, bar); // вызов отрисовки баркода
+                barshape.RightX = met.RightX;
+                barshape.BottomY = met.TopY;
+                Shape podp = brk.CreateArtisticText(met.RightX - 245, met.TopY + 3, nbr.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment); // подписываем значение баркода
+                podp.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
+                podp.ConvertToCurves();
+                oposAndBar = corelApp.ActiveDocument.CreateShapeRangeFromArray();
+                oposAndBar.AddRange(barshape);
+                oposAndBar.Add(podp);// собираем баркод и подпись в один ShapeRange
+                return oposAndBar;
             }
-            
-            metk_sum.Printable = false;
-            prnt.Printable = false;
-            brk.Printable = false;
-            if (metk_g != null)
-            {
-                metk_g.Printable = false;
-            }
+            void ExportCut()
+            { 
+                metk_sum.Printable = false; //ненужные слои перед экспортом делаем непечатными
+                prnt.Printable = false;
+                brk.Printable = false;
+                if (metk_g != null)
+                    {
+                        metk_g.Printable = false;
+                    }
+                ShapeRange cut_next = rzk.Shapes.All();
+                cut_next.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
+                Shape cutfnsh = cut_next.Combine();
+                cutfnsh.BreakApart();
 
-            var convert_plt = new Convert_to_plt_and_export();
-            convert_plt.Init(corelApp);
-            convert_plt.Open_pdf(nbr1, n_met, x_dis, y_dis);
-            corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(-270);
-            if (barc2 == true)
-            {
-                corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(180);
-                rzk.Shapes.All().BreakApart();
-                rzk.Shapes.All().Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX");
-                rzk.Shapes.All().Combine();
-                rzk.Shapes.All().BreakApart();
-                convert_plt.Open_pdf(nbr2, n_met, x_dis, y_dis);
-                corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(270);
+                var convert_plt = new Convert_to_plt_and_export();
+                convert_plt.Init(corelApp);
+                convert_plt.Open_pdf(nbr, n_met, x_dis, y_dis);
+                
             }
             metk_sum.Printable = true;
             prnt.Printable = true;

@@ -20,20 +20,13 @@ namespace SummaMetki
         {
             corelApp = app;
         }
-        public void Create(Layer brk, Shape met3,Shape met4, string bar1, string bar2)
+        public ShapeRange Create(Layer brk, string bar)
         {
-
+            ShapeRange barshape = corelApp.ActiveDocument.CreateShapeRangeFromArray();
             string bn;
             string bin;
-            if (met4 == null)
-            {
-                bin = DecimalToPostnet(bar1);
-                
-            }
-            else
-            {
-                bin = DecimalToPostnet(bar2);
-            }
+            bin = DecimalToPostnet(bar);//переводим 12значное число штрихкода в нули и единицы
+            
 
                 string DecimalToPostnet(string dec)
                 {
@@ -91,16 +84,9 @@ namespace SummaMetki
                     } 
                     return bn; 
                 }
-                    
+            bin = "1" + bin + "1"; //добавляем начальные и конечные символы штрихкода
             
-            
-
-                
-
-                
-                bin = "1" + bin + "1";
-            
-            for (int i = 0; i < bin.Length; i++)
+            for (int i = 0; i < bin.Length; i++) //посимвольно перебираем штрихкод
                 {
                     char bit = bin[i];
                     if (bit == '1')
@@ -112,6 +98,7 @@ namespace SummaMetki
                         PaintZero(i);
                     }
                 }
+            //в зависимости от значения рисуем длинную или короткую палку и задаём ей позицию, с права на лево
                 void PaintOne(int i)
                 {
                     var one = brk.CreateRectangle(0, 9.53, 1.52, 0);
@@ -119,6 +106,7 @@ namespace SummaMetki
                     one.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
                     one.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 Move(one, i);
+                barshape.Add(one);
                 }
                 void PaintZero(int i)
                 {
@@ -127,21 +115,13 @@ namespace SummaMetki
                     zero.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
                     zero.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 Move(zero,i);
+                barshape.Add(zero);
                 }
-            void Move(Shape bar,int i)
+            void Move(Shape pl,int i)
             {
-                if (met4==null)
-                {
-                    bar.LeftX = met3.RightX - 215.63 + 3.51 * i;
-                    bar.BottomY = met3.TopY;
-                }
-                else
-                {
-                    bar.LeftX = met4.LeftX + 215.63 - 3.51 * i;
-                    bar.BottomY = met4.TopY;
-                }
+                pl.LeftX = corelApp.ActivePage.LeftX  + 3.51 * i;
             }
-
+            return barshape;
 
         }
     }
