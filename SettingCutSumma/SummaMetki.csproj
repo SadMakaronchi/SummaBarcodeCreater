@@ -263,6 +263,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="BarcodeCreater.cs" />
     <Compile Include="Convert_to_plt_and_export.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -276,9 +277,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converters\ResourceToMediaImageConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MessageBox.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Extensions.cs">

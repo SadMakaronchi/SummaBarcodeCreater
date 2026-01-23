@@ -127,6 +127,8 @@ namespace SummaMetki
             corelApp.ActiveDocument.BeginCommandGroup("Добавление меток и баркодов для " + name);
             corelApp.ActiveDocument.Unit = corel.cdrUnit.cdrMillimeter;
             Boolean barc2 = true;
+            long nbr1;
+            long nbr2;
 
             //тут создаём рабочие слои
 
@@ -143,6 +145,10 @@ namespace SummaMetki
                 corelApp.ActiveDocument.ActivePage.CreateLayer("резка");
                 rzk = corelApp.ActiveDocument.ActivePage.Layers["резка"];
             }
+            corelApp.ActiveDocument.ActivePage.CreateLayer("метки summa");
+            Layer metk_sum = corelApp.ActiveDocument.ActivePage.Layers["метки summa"];
+            Layer metk_g = corelApp.ActiveDocument.ActivePage.Layers.Find("метки для гильотины");
+            Layer brk = corelApp.ActivePage.CreateLayer("баркод");
             //ищем контур по имени спотового цвета абриса
             ShapeRange cut = corelApp.ActiveDocument.ActivePage.Shapes.FindShapes(Query: "@outline.color.name='CutContour'");
             cut.MoveToLayer(rzk);
@@ -176,10 +182,9 @@ namespace SummaMetki
             {
                 zps = 251 - r.SizeWidth;
             }
-            corelApp.ActiveDocument.ActivePage.CreateLayer("метки summa");
-            Layer metk_sum = corelApp.ActiveDocument.ActivePage.Layers["метки summa"];
+            
             int gilmt = 2;
-            Layer metk_g = corelApp.ActiveDocument.ActivePage.Layers.Find("метки для гильотины");
+            
             if (metk_g != null)
             {
                 gilmt = 0;
@@ -198,58 +203,53 @@ namespace SummaMetki
             met3.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
             met3.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
             Shape met4 = null;
+            BarcodeEdit();
             if (barc2 == true)
             {
                 met4 = metk_sum.CreateRectangle(r.LeftX - zps, r.TopY + 16, r.RightX, r.TopY + 13);
                 met4.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 met4.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                BarcodeEdit();
             }
 
             int n_met = metk_y + 1;
             int x_dis = (int)Math.Round(step_y / 0.025);
             int y_dis = (int)Math.Round((met3.SizeWidth + 20 + 3) / 0.025);
 
-            Layer brk = corelApp.ActivePage.CreateLayer("баркод");
-            Random rnd = new Random();
-            long barnmbr = rnd.Next(1_000_000, 10_000_000) * 1000L + rnd.Next(0, 1000);
-
-            long nbr1 = long.Parse("6" + barnmbr);
-            long nbr2 = long.Parse("9" + barnmbr);
-            int CalcCheckDigit(long number)
+            void BarcodeEdit()
             {
-                int sum = number.ToString()
-                               .Where(char.IsDigit)
-                               .Sum(c => c - '0');
-                return (10 - (sum % 10)) % 10;
-            }
-            int nm1 = CalcCheckDigit(nbr1);
-            int nm2 = CalcCheckDigit(nbr2);
-            string bar1 = nbr1.ToString() + nm1;
-            string bar2 = nbr2.ToString() + nm2;
-            Shape barcode1 = brk.CreateArtisticText(met3.RightX, met3.TopY, "S" + bar1 + "S", cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "POSTNET", 30, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
-            barcode1.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
-            barcode1.ConvertToCurves();
-            barcode1.SetSize(212, 9.53);
-            barcode1.RightX = met3.RightX;
-            barcode1.BottomY = met3.TopY;
-            Shape podp1 = brk.CreateArtisticText(met3.RightX - 242, met3.TopY + 3, nbr1.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
-            podp1.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
-            podp1.ConvertToCurves();
+                Random rnd = new Random();
+                long barnmbr = rnd.Next(1_000_000, 10_000_000) * 1000L + rnd.Next(0, 1000);
 
-            if (barc2 == true)
-            {
-                Shape barcode2 = brk.CreateArtisticText(met4.LeftX, met4.TopY, "S" + bar2 + "S", cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "POSTNET", 30, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
-                barcode2.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
-                barcode2.ConvertToCurves();
-                barcode2.SetSize(212, 9.53);
-                barcode2.RightX = met4.LeftX + 212;
-                barcode2.TopY = met4.BottomY;
-                barcode2.Rotate(180);
-                Shape podp2 = brk.CreateArtisticText(met4.LeftX + 216, met4.BottomY - 6, nbr2.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
-                podp2.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
-                podp2.ConvertToCurves();
-                podp2.Rotate(180);
+                nbr1 = long.Parse("6" + barnmbr);
+                nbr2 = long.Parse("9" + barnmbr);
+                int CalcCheckDigit(long number)
+                {
+                    int sum = number.ToString()
+                                   .Where(char.IsDigit)
+                                   .Sum(c => c - '0');
+                    return (10 - (sum % 10)) % 10;
+                }
+                int nm1 = CalcCheckDigit(nbr1);
+                int nm2 = CalcCheckDigit(nbr2);
+                string bar1 = nbr1.ToString() + nm1;
+                string bar2 = nbr2.ToString() + nm2;
+                var barcode_create = new BarcodeCreater();
+                
+                barcode_create.Init(corelApp);
+                barcode_create.Create(brk, met3, met4, bar1, bar2);
+                Shape podp1 = brk.CreateArtisticText(met3.RightX - 242, met3.TopY + 3, nbr1.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
+                podp1.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
+                podp1.ConvertToCurves();
+                if (barc2 == true)
+                {
+                    Shape podp2 = brk.CreateArtisticText(met4.LeftX + 216, met4.BottomY - 6, nbr2.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrTrue, cdrTriState.cdrFalse, cdrFontLine.cdrNoFontLine, cdrAlignment.cdrNoAlignment);
+                    podp2.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
+                    podp2.ConvertToCurves();
+                    podp2.Rotate(180);
+                }
             }
+            
             metk_sum.Printable = false;
             prnt.Printable = false;
             brk.Printable = false;
