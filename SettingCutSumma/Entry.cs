@@ -1,16 +1,11 @@
 ﻿using Corel.Interop.VGCore;
 using SettingCutSumma;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Xml.Serialization;
 using corel = Corel.Interop.VGCore;
 
@@ -126,8 +121,17 @@ namespace SummaMetki
             string name = corelApp.ActiveDocument.Name;
             corelApp.ActiveDocument.BeginCommandGroup("Добавление меток и баркодов для " + name);
             corelApp.ActiveDocument.Unit = corel.cdrUnit.cdrMillimeter;
-            Boolean barc2 = true;
+            // получаем настройки из файла
+            Settings_cut settings = new Settings_cut();
+            string path_settings = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
+            using (FileStream fs = File.OpenRead(path_settings))
+            {
+                XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
+                settings = (Settings_cut)xsz.Deserialize(fs);
+            }
+            bool barc2 = settings.barc2;
             long nbr;
+
             Random rnd = new Random();// генерируем рандомное число
             long barnmbr = rnd.Next(1_000_000, 10_000_000) * 1000L + rnd.Next(0, 1000);
 

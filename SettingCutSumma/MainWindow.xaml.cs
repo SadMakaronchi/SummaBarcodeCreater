@@ -1,27 +1,11 @@
 ﻿using Corel.Interop.VGCore;
 using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using System.Xml.Linq;
+using System.Xml.Serialization;
 using corel = Corel.Interop.VGCore;
 using Window = System.Windows.Window;
+
 
 
 namespace SummaMetki
@@ -29,6 +13,7 @@ namespace SummaMetki
    
     public partial class MainWindow : Window
     {
+       
         public corel.Application corelApp;
         public Styles.StylesController stylesController;
         public MainWindow(object app)
@@ -43,6 +28,28 @@ namespace SummaMetki
             {
                 global::System.Windows.MessageBox.Show("VGCore Erro");
             }
+            Settings_cut settings = new Settings_cut();
+            string path_settings = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
+            using (FileStream fs = File.OpenRead(path_settings))
+            {
+                XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
+                settings = (Settings_cut)xsz.Deserialize(fs);
+            }
+
+            for (int vel = 100; vel < 1010; vel += 10)
+            {
+                Velosity.Items.Add(vel);
+            }
+            for(int ovr = 1 ; ovr < 11; ovr++)
+            {
+                Overcut.Items.Add(ovr/10m);
+            }
+
+            Velosity.SelectedItem = settings.velosity;
+            Overcut.SelectedItem = settings.overcut/10m;
+              
+
+                 
            
         }
 
