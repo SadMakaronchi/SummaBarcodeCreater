@@ -98,7 +98,7 @@ namespace SummaMetki
                         PaintZero(i);
                     }
                 }
-            //в зависимости от значения рисуем длинную или короткую палку и задаём ей позицию, с права на лево
+            //в зависимости от значения рисуем длинную или короткую палку и задаём ей позицию, справа налево
                 void PaintOne(int i)
                 {
                     var one = brk.CreateRectangle(0, 9.53, 1.52, 0);
@@ -121,6 +121,7 @@ namespace SummaMetki
             {
                 pl.LeftX = corelApp.ActivePage.LeftX  + 3.51 * i;
             }
+            
             return barshape;
 
         }
