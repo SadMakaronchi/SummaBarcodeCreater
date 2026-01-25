@@ -40,21 +40,33 @@ namespace SummaMetki
             {
                 global::System.Windows.MessageBox.Show("VGCore Erro");
             }
-
-            using (FileStream fs = File.OpenRead(path_settings))
+            try
             {
-                XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
-                settings = (Settings_cut)xsz.Deserialize(fs);
-            }
-
-            for (int vel = 100; vel < 1010; vel += 10)
-            {
-                Velosity.Items.Add(new ComboItems
+                if (File.Exists(path_settings) == true)
                 {
-                    Value = vel,
-                    pref = vel + " мм/сек"
-                });
+                    using (FileStream fs = File.OpenRead(path_settings))
+                    {
+                        XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
+                        settings = (Settings_cut)xsz.Deserialize(fs);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Не найден файл настроек,настройки будут заданы по умолчанию");
+                }
             }
+            catch
+            {
+               MessageBox.Show("Файл настроек повреждён,будут заданы настройки по умолчанию");
+            }
+                    for (int vel = 100; vel < 1010; vel += 10)
+                    {
+                        Velosity.Items.Add(new ComboItems
+                        {
+                            Value = vel,
+                            pref = vel + " мм/сек"
+                        });
+                    }
             for (int ovr = 1; ovr < 11; ovr++)
             {
                 Overcut.Items.Add(new ComboItems

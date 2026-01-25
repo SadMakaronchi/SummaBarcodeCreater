@@ -32,7 +32,7 @@
         <Button Name="PathButton" Margin="0,175,20,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="80" Height="24" Content="Выбрать" Click="FolderClick"/>
         <Button Name="OK" Margin="20,260,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Height="30" Content="Сохранить настройки" Click="Ok_click"/>
         <TextBlock Name="ColorNm" Margin="20,205,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Имена спотовых цветов для поиска контура"/>
-        <TextBox Name="Color" Margin="20,225,20,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="275" Height="24"/>
+        <TextBox Name="Color" Margin="20,225,20,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="270" Height="24"/>
     </Grid>
 
 
