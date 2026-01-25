@@ -1,17 +1,10 @@
 ﻿using Corel.Interop.VGCore;
-using SummaMetki.Properties;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Shapes;
 using System.Xml.Serialization;
-using static System.Net.Mime.MediaTypeNames;
 using corel = Corel.Interop.VGCore;
 using Path = System.IO.Path;
 

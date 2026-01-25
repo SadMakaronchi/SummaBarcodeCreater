@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Xml.Serialization;
 using corel = Corel.Interop.VGCore;
 
@@ -34,7 +33,6 @@ namespace SummaMetki
         {
             corelApp = app;
         }
-        
 
 
         public corel.Application crl = new corel.Application();
@@ -72,29 +70,14 @@ namespace SummaMetki
         
         public void Progress() //запуск полосы прогресса экспорта в отдельнном потоке
         {
-            if (uiThread != null && uiThread.IsAlive)
-            {
-                win1.Dispatcher.Invoke(() =>
-                {
-                    if (win1.WindowState == WindowState.Minimized)
-                        win1.WindowState = WindowState.Normal;
-                    win1.Activate();
-                });
-                return;
-            }
             uiThread = new Thread(() =>
             {
-
                 win1 = new progress();
-                win1.Closed += (s, e) => win1.Dispatcher.InvokeShutdown();
                 win1.Show();
                 win1.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
-
                 System.Windows.Threading.Dispatcher.Run();
             });
-
-            uiThread.SetApartmentState(ApartmentState.STA); 
-            uiThread.IsBackground = true;
+            uiThread.SetApartmentState(ApartmentState.STA);
             uiThread.Start();
         }
 
@@ -120,28 +103,30 @@ namespace SummaMetki
                 return;
 
             Progress();
-            Thread corelThread = new Thread(() =>
-            {
+            
+            
                 try
                 {
                     StartMacros();
                 }
                 finally
                 {
-                    // Закрываем прогресс в UI потоке
+                    
                     Progress_stop();
                 }
-            });
+            
 
-            corelThread.SetApartmentState(ApartmentState.STA);
-            corelThread.Start();
         }
         public void StartMacros()
-        {
-            corelApp.BeginDraw();
+        { 
             string name = corelApp.ActiveDocument.Name;
-            corelApp.ActiveDocument.BeginCommandGroup("Добавление меток и баркодов для " + name);
-            corelApp.ActiveDocument.Unit = corel.cdrUnit.cdrMillimeter;
+            var corelDoc = corelApp.ActiveDocument;
+            var ActPage = corelDoc.ActivePage;
+            var layers = ActPage.Layers;
+            ShapeRange allShapes = ActPage.Shapes.All();
+            corelApp.BeginDraw(false,true,false,true);
+            corelDoc.BeginCommandGroup("Добавление меток и баркодов для " + name);
+            corelDoc.Unit = corel.cdrUnit.cdrMillimeter;
             // получаем настройки из файла
             Settings_cut settings = new Settings_cut();
             string path_settings = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
@@ -161,44 +146,47 @@ namespace SummaMetki
 
             //тут создаём рабочие слои
 
-            Layer prnt = corelApp.ActiveDocument.ActivePage.Layers.Find("печать");
+            Layer prnt = layers.Find("печать");
             if (prnt == null)
             {
                 corelApp.ActiveLayer.Name = "печать";
-                prnt = corelApp.ActiveDocument.ActivePage.Layers["печать"];
+                prnt = layers["печать"];
             }
 
-            Layer rzk = corelApp.ActiveDocument.ActivePage.Layers.Find("резка");
+            Layer rzk = layers.Find("резка");
             if (rzk == null)
             {
-                corelApp.ActiveDocument.ActivePage.CreateLayer("резка");
-                rzk = corelApp.ActiveDocument.ActivePage.Layers["резка"];
+                ActPage.CreateLayer("резка");
+                rzk = layers["резка"];
             }
-            corelApp.ActiveDocument.ActivePage.CreateLayer("метки summa");
-            Layer metk_sum = corelApp.ActiveDocument.ActivePage.Layers["метки summa"];
-            Layer metk_g = corelApp.ActiveDocument.ActivePage.Layers.Find("метки для гильотины");
-            Layer brk = corelApp.ActivePage.CreateLayer("баркод");
+            ActPage.CreateLayer("метки summa");
+            Layer metk_sum = layers["метки summa"];
+            Layer metk_g = layers.Find("метки для гильотины");
+            Layer brk = ActPage.CreateLayer("баркод");
             Layer nmDoc = null;
 
             //ищем контур по имени спотового цвета абриса
             foreach (string color in colorCut)
             {
-                ShapeRange cut = corelApp.ActiveDocument.ActivePage.Shapes.FindShapes(Query: "@outline.color.name='" + color + "'");
-                cut.MoveToLayer(rzk);
-                foreach (Shape s in cut)
+                foreach (Shape s in allShapes)
                 {
-                    s.BreakApart();
+                    if (s.Outline?.Color?.Name == color)
+                    {
+                        s.MoveToLayer(rzk);
+                        s.BreakApart();
+                    }
                 }
             }
             if(rzk.Shapes.Count==0)
             {
+                Progress_stop();
                 MessageBox.Show("Контур резки не найден!");
                 corelApp.EndDraw();
-                Progress_stop();
                 return;
             }
+            ShapeRange rzkShapes = rzk.Shapes.All();
             prnt.Shapes.All().CreateSelection();
-            rzk.Shapes.All().AddToSelection();
+            rzkShapes.AddToSelection();
             ShapeRange r = corelApp.ActiveSelectionRange;
             Shape nameText = null;
             double hgtName = 0;
@@ -210,11 +198,12 @@ namespace SummaMetki
 
             if (settings.doc_name == true) //создаём название документа
             {
-                nmDoc = corelApp.ActiveDocument.ActivePage.CreateLayer("Имя документа");
-                string nameDocVolume = corelApp.ActiveDocument.Name;
+                nmDoc = ActPage.CreateLayer("Имя документа");
+                string nameDocVolume = name;
                 nameText = nmDoc.CreateParagraphText(r.LeftX,r.TopY,r.LeftX + r.SizeWidth + zps,r.BottomY, nameDocVolume, cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrFalse, cdrTriState.cdrFalse);
                 nameText.ConvertToCurves();
                 nameText.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
+                allShapes.Add(nameText);
                 hgtName = nameText.SizeHeight + 2;
             }
             // считаем шаг и количество меток OPOS
@@ -246,44 +235,48 @@ namespace SummaMetki
                 Shape met0 = metk_sum.CreateRectangle(r.LeftX - 11 - gilmt - zps, r.BottomY - 12.53 + q * step_y, r.LeftX - 8 - gilmt - zps, r.BottomY - 15.53 + q * step_y);
                 met0.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 met0.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                allShapes.Add(met0);
                 Shape met1 = metk_sum.CreateRectangle(r.RightX + 11 + gilmt, r.BottomY - 12.53 + q * step_y, r.RightX + 8 + gilmt, r.BottomY - 15.53 + q * step_y);
                 met1.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 met1.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                allShapes.Add(met1);
             }
             if (settings.doc_name == true)
             {
                 nameText.RightX = r.RightX;
                 nameText.TopY = metk_sum.Shapes.All().TopY - b2;
             }
-            ShapeRange oposAndBar = corelApp.ActiveDocument.CreateShapeRangeFromArray();
+            ShapeRange oposAndBar = corelDoc.CreateShapeRangeFromArray();
             Shape met;
             oposAndBar = Create_OPOS_XY("6");// вызов отрисовки нижней метки OPOS_XY и баркода
             int n_met = metk_y + 1;
             int x_dis = (int)Math.Round(step_y / 0.025);
             int y_dis = (int)Math.Round((oposAndBar.SizeWidth + 20 + 3) / 0.025);
             ExportCut();
-            corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(-270); // возвращаем исходное положение
+            allShapes.Rotate(-270); // возвращаем исходное положение
             if (barc2 == true) //проверка нужен ли второй баркод
-                {
+            {
                 oposAndBar = Create_OPOS_XY("9"); // повторно отрисовываем нижнюю метку, если выбран второй баркод
                 oposAndBar.Rotate(180);
                 oposAndBar.TopY = metk_sum.Shapes.All().TopY;
-                corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(180);
-                rzk.Shapes.All().BreakApart();
-                rzk.Shapes.All().Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX");
-                rzk.Shapes.All().Combine();
-                rzk.Shapes.All().BreakApart();
+                allShapes.Rotate(180);
+                rzkShapes = rzk.Shapes.All();
+                rzkShapes.BreakApart();
+                rzkShapes.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX");
+                rzkShapes.Combine();
                 ExportCut();
-                corelApp.ActiveDocument.ActivePage.Shapes.All().Rotate(270);
-                }
+                allShapes.Rotate(270);
+            }
             
             ShapeRange Create_OPOS_XY(string n)
             {
                 met = metk_sum.CreateRectangle(r.LeftX - zps, r.BottomY - 13, r.RightX, r.BottomY - 16); // отрисовка нижней метки OPOS_XY
                 met.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 met.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
+                allShapes.Add(met);
                 oposAndBar = BarcodeEdit(n);
                 oposAndBar.Add(met);
+                allShapes.AddRange(oposAndBar);
                 return oposAndBar;
             }
             
@@ -302,59 +295,51 @@ namespace SummaMetki
                 string bar = nbr.ToString() + nm; // число баркода с проверочной цифрой
                 var barcode_create = new BarcodeCreater();
                 barcode_create.Init(corelApp);
-                ShapeRange barshape = barcode_create.Create(brk, bar); // вызов отрисовки баркода
+                Shape barshape = barcode_create.Create(brk, bar); // вызов отрисовки баркода
                 barshape.RightX = met.RightX;
                 barshape.BottomY = met.TopY;
                 Shape podp = brk.CreateArtisticText(met.RightX - 245, met.TopY + 3, nbr.ToString(), cdrTextLanguage.cdrEnglishUS, cdrTextCharSet.cdrCharSetDefault, "Arial", 12, cdrTriState.cdrFalse, cdrTriState.cdrFalse); // подписываем значение баркода
                 podp.Fill.UniformColor.CMYKAssign(0, 0, 0, 40);
                 podp.ConvertToCurves();
-                oposAndBar = corelApp.ActiveDocument.CreateShapeRangeFromArray();
-                oposAndBar.AddRange(barshape);
+                oposAndBar = corelDoc.CreateShapeRangeFromArray();
+                oposAndBar.Add(barshape);
                 oposAndBar.Add(podp);// собираем баркод и подпись в один ShapeRange
                 return oposAndBar;
             }
             void ExportCut()
             { 
-                metk_sum.Printable = false; //ненужные слои перед экспортом делаем непечатными
-                prnt.Printable = false;
-                brk.Printable = false;
-                if (metk_g != null)
-                    {
-                        metk_g.Printable = false;
-                    }
-                if (settings.doc_name == true)
+                //ненужные слои перед экспортом делаем непечатными
+                foreach(Layer layer in layers)
                 {
-                    nmDoc.Printable = false;
+                    if(layer!= rzk)
+                    {
+                        layer.Printable = false;
+                    }
                 }
-                ShapeRange cut_next = rzk.Shapes.All();
-                cut_next.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
-                Shape cutfnsh = cut_next.Combine();
-                cutfnsh.BreakApart();
-
+                rzkShapes.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
+                rzkShapes.Combine();
+                allShapes.AddRange(rzk.Shapes.All());
                 var convert_plt = new Convert_to_plt_and_export();
                 convert_plt.Init(corelApp);
                 convert_plt.Open_pdf(nbr, n_met, x_dis, y_dis);
                 
             }
-            metk_sum.Printable = true;
-            prnt.Printable = true;
-            brk.Printable = true;
-            rzk.Printable = false;
-            if (metk_g != null)
+            foreach (Layer layer in layers)
             {
-                metk_g.Printable = true;
+                if (layer != rzk)
+                {
+                    layer.Printable = true;
+                }
+                rzk.Printable = false;
             }
-            if(settings.doc_name == true)
-            {
-                nmDoc.Printable = true;
-            }
-            corelApp.ActiveDocument.ActivePage.Shapes.All().AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
-            corelApp.ActiveDocument.ActivePage.Shapes.All().AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
-            corelApp.ActiveDocument.ActivePage.SizeHeight = corelApp.ActiveDocument.ActivePage.Shapes.All().SizeHeight + 2;
-            corelApp.ActiveDocument.ActivePage.SizeWidth = corelApp.ActiveDocument.ActivePage.Shapes.All().SizeWidth + 2;
-
+            allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
+            allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
+            ActPage.SizeHeight = allShapes.SizeHeight + 2;
+            ActPage.SizeWidth = allShapes.SizeWidth + 2;
+            corelDoc.ClearSelection();
+            corelDoc.EndCommandGroup();
             corelApp.EndDraw();
-            corelApp.ActiveDocument.EndCommandGroup();
+            
         }
             
 

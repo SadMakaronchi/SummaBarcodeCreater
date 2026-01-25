@@ -1,12 +1,4 @@
 ﻿using Corel.Interop.VGCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Shapes;
 using corel = Corel.Interop.VGCore;
 using Shape = Corel.Interop.VGCore.Shape;
 
@@ -20,8 +12,9 @@ namespace SummaMetki
         {
             corelApp = app;
         }
-        public ShapeRange Create(Layer brk, string bar)
+        public Shape Create(Layer brk, string bar)
         {
+            var actPage = corelApp.ActivePage;
             ShapeRange barshape = corelApp.ActiveDocument.CreateShapeRangeFromArray();
             string bn;
             string bin;
@@ -119,10 +112,10 @@ namespace SummaMetki
                 }
             void Move(Shape pl,int i)
             {
-                pl.LeftX = corelApp.ActivePage.LeftX  + 3.51 * i;
+                pl.LeftX = actPage.LeftX  + 3.51 * i;
             }
-            
-            return barshape;
+            var barshapeShape = barshape.Combine();
+            return barshapeShape;
 
         }
     }
