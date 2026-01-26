@@ -6,7 +6,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Xml.Serialization;
+using Application = Corel.Interop.VGCore.Application;
 using corel = Corel.Interop.VGCore;
 
 namespace SummaMetki
@@ -14,7 +16,7 @@ namespace SummaMetki
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Guid("b3f7d9a3-02f6-4259-9b13-28c2c8070cfa")]
-
+  
     public class Settings_cut //Параметры plt
     {
         public string path_plt { get; set; } = @"C:\РЕЗКА";
@@ -26,7 +28,7 @@ namespace SummaMetki
         public bool doc_name { get; set; } = true;
     }
    
-    public class Entry
+    public class Entry 
     {
         public corel.Application corelApp;
         public void Init(corel.Application app)
@@ -270,7 +272,7 @@ namespace SummaMetki
             
             ShapeRange Create_OPOS_XY(string n)
             {
-                met = metk_sum.CreateRectangle(r.LeftX - zps, r.BottomY - 13, r.RightX, r.BottomY - 16); // отрисовка нижней метки OPOS_XY
+                met = metk_sum.CreateRectangle(r.LeftX - zps, r.BottomY - 12.53, r.RightX, r.BottomY - 15.53); // отрисовка нижней метки OPOS_XY
                 met.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                 met.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
                 allShapes.Add(met);
@@ -332,8 +334,8 @@ namespace SummaMetki
                 }
                 rzk.Printable = false;
             }
-            allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
-            allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
+            ActPage.Shapes.All().AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
+            ActPage.Shapes.All().AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
             ActPage.SizeHeight = allShapes.SizeHeight + 2;
             ActPage.SizeWidth = allShapes.SizeWidth + 2;
             corelDoc.ClearSelection();

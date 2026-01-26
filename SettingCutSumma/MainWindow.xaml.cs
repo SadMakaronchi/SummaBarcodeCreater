@@ -1,15 +1,12 @@
-﻿using Corel.Interop.VGCore;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
-using System.Text;
 using System.IO;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Xml.Serialization;
 using corel = Corel.Interop.VGCore;
-using Window = System.Windows.Window;
 using MessageBox = System.Windows.MessageBox;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Linq;
+using Window = System.Windows.Window;
 
 namespace SummaMetki
 {
@@ -20,6 +17,7 @@ namespace SummaMetki
         public corel.Application corelApp;
         public Styles.StylesController stylesController;
         Settings_cut settings = new Settings_cut();
+        public string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel");
         public string path_settings = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
         public string fn;
         public class ComboItems
@@ -42,6 +40,19 @@ namespace SummaMetki
             }
             try
             {
+                
+                try
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    MessageBox.Show("Нет прав на создание папки для хранения файла с настройками!Пожалуйста запустите CorelDraw с правами администратора");
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Ошибка создания папки для файлов с настройками:" + ex.Message);
+                }
                 if (File.Exists(path_settings) == true)
                 {
                     using (FileStream fs = File.OpenRead(path_settings))

@@ -1,1 +1,13 @@
-﻿
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CorelAddon>
+  <Name>SummaBarcode</Name>
+  <Description>Создание штрихкодов Summa</Description>
+  <Version>1.0</Version>
+  <Manufacturer>SadMakaronchi</Manufacturer>
+  <LoadOnStartup>true</LoadOnStartup>
+  <Components>
+    <DLL File="SummaMetki.dll">
+      <Class>SummaMetki.SummaBarcodeCreater</Class>
+    </DLL>
+  </Components>
+</CorelAddon>

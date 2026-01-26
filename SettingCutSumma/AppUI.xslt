@@ -29,17 +29,19 @@
                       enable="true"/>
 			<!-- Кнопка запуска -->
 			<itemData guid="03f16379-b466-4e4c-973e-449cea399ddc"
-				dynamicCommand="summa_metki.init.init_metki"
-				dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd"
 				userCaption="Поставить Метки"
-				userToolTip="Поставить Метки">
+				userToolTip="Добавляет метки и штрихкод Summa"
+				type="button"
+				enable="true"
+				onInvoke="*Bind(DataSource=Entry;Path=Begin)">
 			</itemData>
 			<!-- Кнопка настроек -->
 			<itemData guid="311df58a-3407-46c8-880d-fa34554542bc"
-				dynamicCommand="summa_metki.settings.view"
-				dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd"
 				userCaption="Настройки"
-				userToolTip="Настройки">
+				userToolTip="Настройки SummaBarcodeCreater"
+				type="button"
+				enable="true"
+				onInvoke="*Bind(DataSource=Entry;Path=Start)">
 
 			</itemData>
 
