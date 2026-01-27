@@ -16,7 +16,27 @@ namespace SummaMetki
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Guid("b3f7d9a3-02f6-4259-9b13-28c2c8070cfa")]
-  
+    public class Plugin
+    {
+        private Application _app;
+        private EntryDataSource _entry;
+
+        public void OnLoad(Application app)
+        {
+            _entry = new EntryDataSource(app);
+
+            app.FrameWork.Application.RegisterDataSource(
+                "Entry",
+                (ICUIDataSourceFactory)_entry
+            );
+            System.Windows.Forms.MessageBox.Show("Entry DataSource registered");
+        }
+
+        public void OnUnload(Application app)
+        {
+            app.FrameWork.Application.UnregisterDataSource("Entry");
+        }
+    }
     public class Settings_cut //Параметры plt
     {
         public string path_plt { get; set; } = @"C:\РЕЗКА";
@@ -27,20 +47,32 @@ namespace SummaMetki
         public string[] color_name { get; set; } = new[] { "ColorContour" };
         public bool doc_name { get; set; } = true;
     }
-   
-    public class Entry 
+    [ComVisible(true)]
+    [ClassInterface(ClassInterfaceType.AutoDual)]
+    [Guid("107368b5-9074-4f33-b2b6-4ce9852f503f")]
+    public class EntryDataSource
     {
-        public corel.Application corelApp;
-        public void Init(corel.Application app)
+        public EntryDataSource()
+        {
+        }
+
+        public EntryDataSource(Application app)
+        {
+        }
+
+        public void Initialize(Application app)
         {
             corelApp = app;
         }
+
 
 
         public corel.Application crl = new corel.Application();
         private Thread uiThread;
         private MainWindow win;
         private progress win1;
+        private Application corelApp;
+
         public void Start() //запуск окна настроек в отдельном потоке
         {
             if (uiThread != null && uiThread.IsAlive)
@@ -120,7 +152,8 @@ namespace SummaMetki
 
         }
         public void StartMacros()
-        { 
+        {
+            
             string name = corelApp.ActiveDocument.Name;
             var corelDoc = corelApp.ActiveDocument;
             var ActPage = corelDoc.ActivePage;

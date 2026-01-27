@@ -330,7 +330,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="AppUI.xslt" />
+    <Content Include="AppUI.xslt">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="CorelDrw.addon" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
