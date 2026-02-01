@@ -5,9 +5,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using static System.Net.WebRequestMethods;
 using corel = Corel.Interop.VGCore;
+using File = System.IO.File;
 using Path = System.IO.Path;
-
 
 namespace SummaMetki
 {
@@ -62,8 +63,9 @@ namespace SummaMetki
             explt.FillAngle = 0;
             explt.HatchAngle = 90;
             explt.CurveResolution = 0.0001;
+            explt.RemoveHiddenLines = true;
             explt.AutomaticWeld = false;
-            explt.ExcludeWVC = true;
+            explt.ExcludeWVC = false;
             explt.PlotterUnits = 1016;
             explt.PlotterOrigin = 1;   // левый нижний
             explt.Finish();

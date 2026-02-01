@@ -322,8 +322,9 @@ namespace SummaMetki
                             layer.Printable = false;
                         }
                     }
-                    rzkShapes.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
-                    rzkShapes.Combine();
+                    rzk.Shapes.All().Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
+                    rzk.Shapes.All().Combine();
+                    rzk.Shapes.All().BreakApart();
                     allShapes.AddRange(rzk.Shapes.All());
                     var convert_plt = new Convert_to_plt_and_export();
                     convert_plt.Init(corelApp);
