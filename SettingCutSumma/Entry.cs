@@ -125,6 +125,8 @@ namespace SummaMetki
             
 
         }
+        public string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel");
+        public string path_settings = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
         public void StartMacros()
         {
             
@@ -140,11 +142,40 @@ namespace SummaMetki
                 corelDoc.Unit = corel.cdrUnit.cdrMillimeter;
                 // получаем настройки из файла
                 Settings_cut settings = new Settings_cut();
-                string path_settings = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
-                using (FileStream fs = File.OpenRead(path_settings))
+                if (Directory.Exists(folder)==false)
                 {
-                    XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
-                    settings = (Settings_cut)xsz.Deserialize(fs);
+                    try
+                    {
+                        Directory.CreateDirectory(folder);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        Progress_stop();
+                        MessageBox.Show("Нет прав на создание папки для хранения файла с настройками!Пожалуйста запустите CorelDraw с правами администратора");
+                        return;
+                    }
+                    try
+                    {
+                        using (FileStream fs = File.Create(path_settings))
+                        {
+                            XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
+                            xsz.Serialize(fs, settings);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Progress_stop();
+                        MessageBox.Show("Ошибка создания файла настроек!" + ex);
+                        return;
+                    }
+                }
+                else
+                {
+                    using (FileStream fs = File.OpenRead(path_settings))
+                    {
+                        XmlSerializer xsz = new XmlSerializer(typeof(Settings_cut));
+                        settings = (Settings_cut)xsz.Deserialize(fs);
+                    }
                 }
                 bool barc2 = settings.barc2;
                 long nbr;
@@ -349,6 +380,7 @@ namespace SummaMetki
             }
             catch (Exception ex)
             {
+                Progress_stop();
                 MessageBox.Show("Во время работы плагина произошла ошибка" + ex.Message);
             }
             
