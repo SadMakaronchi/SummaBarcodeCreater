@@ -18,8 +18,8 @@
 					  flyoutBarRef="d0b1b08c-1e1e-4793-9f44-acdab3319a18"
 					  type="flyout"
 					  userCreated="true"
-					  userToolTip="Меню плагина для Summa  by sad_makaronchi™"
-					  userCaption="Меню плагина для Summa  by sad_makaronchi™"/>
+					  userToolTip="Меню плагина для Summa  by sad_makaronchi"
+					  userCaption="Меню плагина для Summa  by sad_makaronchi"/>
 			<itemData guid="41a13089-1d92-4b2d-a224-f11daefb7b83"
 					  noBmpOnMenu="true"
 					  type="checkButton"
@@ -66,7 +66,7 @@
 
 			<commandBarData guid="d0b1b08c-1e1e-4793-9f44-acdab3319a18"
 							type="menu"
-							nonLocalizableName="Меню плагина для Summa  by sad_makaronchi™"
+							nonLocalizableName="Меню плагина для Summa  by sad_makaronchi"
 							flyout="true">
 				<menu>
 					<item guidRef="41a13089-1d92-4b2d-a224-f11daefb7b83"/>

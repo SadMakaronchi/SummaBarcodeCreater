@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Xml.Serialization;
 using Application = Corel.Interop.VGCore.Application;
 using corel = Corel.Interop.VGCore;
@@ -24,7 +23,7 @@ namespace SummaMetki
         public bool barc2 { get; set; } = true;
         public int overcut { get; set; } = 1;
         public bool smothing { get; set; } = true;
-        public string[] color_name { get; set; } = new[] { "ColorContour" };
+        public string[] color_name { get; set; } = new[] { "CutContour" };
         public bool doc_name { get; set; } = true;
     }
     [ComVisible(true)]
@@ -212,7 +211,10 @@ namespace SummaMetki
                 {
                     ShapeRange cut = corelApp.ActiveDocument.ActivePage.Shapes.FindShapes(Query: "@outline.color.name='" + color + "'");
                     cut.MoveToLayer(rzk);
-                    cut.BreakApart();
+                    foreach (Shape s in cut)
+                    {
+                        s.Style.StringAssign(@"{""outline"":{""width"":""762""}}");
+                    }
                 }
                 if (rzk.Shapes.Count == 0)
                 {
@@ -221,10 +223,14 @@ namespace SummaMetki
                     corelApp.EndDraw();
                     return;
                 }
-                ShapeRange rzkShapes = rzk.Shapes.All();
-                prnt.Shapes.All().CreateSelection();
-                rzkShapes.AddToSelection();
-                ShapeRange r = corelApp.ActiveSelectionRange;
+                ShapeRange r = corelApp.ActiveDocument.CreateShapeRangeFromArray();
+                foreach(Layer layer in ActPage.Layers)
+                {
+                    if (layer != metk_g)
+                    {
+                        r.AddRange(layer.Shapes.All());
+                    }
+                }
                 Shape nameText = null;
                 double hgtName = 0;
                 double zps = 0;
@@ -260,20 +266,15 @@ namespace SummaMetki
 
 
 
-                int gilmt = 2;
-
-                if (metk_g != null)
-                {
-                    gilmt = 0;
-                }
+                
 
                 for (int q = 0; q < metk_y + 1; q++) // отрисовка меток OPOS
                 {
-                    Shape met0 = metk_sum.CreateRectangle(r.LeftX - 11 - gilmt - zps, r.BottomY - 12.53 + q * step_y, r.LeftX - 8 - gilmt - zps, r.BottomY - 15.53 + q * step_y);
+                    Shape met0 = metk_sum.CreateRectangle(r.LeftX - 13 - zps, r.BottomY - 12.53 + q * step_y, r.LeftX - 10 - zps, r.BottomY - 15.53 + q * step_y);
                     met0.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                     met0.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
                     allShapes.Add(met0);
-                    Shape met1 = metk_sum.CreateRectangle(r.RightX + 11 + gilmt, r.BottomY - 12.53 + q * step_y, r.RightX + 8 + gilmt, r.BottomY - 15.53 + q * step_y);
+                    Shape met1 = metk_sum.CreateRectangle(r.RightX + 13, r.BottomY - 12.53 + q * step_y, r.RightX + 10, r.BottomY - 15.53 + q * step_y);
                     met1.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                     met1.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
                     allShapes.Add(met1);
@@ -297,10 +298,6 @@ namespace SummaMetki
                     oposAndBar.Rotate(180);
                     oposAndBar.TopY = metk_sum.Shapes.All().TopY;
                     allShapes.Rotate(180);
-                    rzkShapes = rzk.Shapes.All();
-                    rzkShapes.BreakApart();
-                    rzkShapes.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX");
-                    rzkShapes.Combine();
                     ExportCut();
                     allShapes.Rotate(270);
                 }
@@ -369,6 +366,7 @@ namespace SummaMetki
                         layer.Printable = true;
                     }
                     rzk.Printable = false;
+                    rzk.Visible = false;
                 }
                 ActPage.Shapes.All().AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
                 ActPage.Shapes.All().AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
@@ -378,10 +376,11 @@ namespace SummaMetki
                 corelDoc.EndCommandGroup();
                 corelApp.EndDraw();
             }
-            catch (Exception ex)
+            catch(NullReferenceException ex) 
             {
                 Progress_stop();
-                MessageBox.Show("Во время работы плагина произошла ошибка" + ex.Message);
+                corelApp.EndDraw();
+                MessageBox.Show("Во время работы плагина произошла ошибка" + ex);
             }
             
         }
