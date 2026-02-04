@@ -31,7 +31,6 @@
 			<itemData guid="03f16379-b466-4e4c-973e-449cea399ddc"
 				userCaption="Поставить Метки"
 				userToolTip="Добавляет метки и штрихкод Summa"
-				type="button"
 				dynamicCommand="summa_metki.init.init_metki"
 				dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd">
 			</itemData>
@@ -39,7 +38,6 @@
 			<itemData guid="311df58a-3407-46c8-880d-fa34554542bc"
 				userCaption="Настройки"
 				userToolTip="Настройки SummaBarcodeCreater"
-				type="button"
 				dynamicCommand="summa_metki.settings.view"
 				dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd">
 			</itemData>
