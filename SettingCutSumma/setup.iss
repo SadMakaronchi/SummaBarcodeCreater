@@ -32,8 +32,8 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Source: "..\source\repos\SettingCutSumma\SettingCutSumma\Addons\SettingCutSumma\CorelDrw.addon"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
 Source: "..\source\repos\SettingCutSumma\SettingCutSumma\UserUI.xslt"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
 Source: "\\DESKTOP-S94IK04\MijCtrl\регистрация библиотеки.cmd"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
-Source: "..\source\repos\SadMakaronchi\SummaBarcodeCreater\SettingCutSumma\Addons\SettingCutSumma\SummaMetki.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\source\repos\SadMakaronchi\SummaBarcodeCreater\SettingCutSumma\Addons\SettingCutSumma\AppUI.xslt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\source\repos\SadMakaronchi\SummaBarcodeCreater\SettingCutSumma\Addons\SettingCutSumma\SummaMetki.dll"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
+Source: "..\source\repos\SadMakaronchi\SummaBarcodeCreater\SettingCutSumma\Addons\SettingCutSumma\AppUI.xslt"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
 
 [Run]
 Filename: "{code:GetAddonDir}\регистрация библиотеки.cmd"
