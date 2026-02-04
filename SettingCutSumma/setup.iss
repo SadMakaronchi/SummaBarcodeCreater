@@ -34,6 +34,7 @@ Source: "..\source\repos\SettingCutSumma\SettingCutSumma\UserUI.xslt"; DestDir: 
 Source: "\\DESKTOP-S94IK04\MijCtrl\регистрация библиотеки.cmd"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
 Source: "..\source\repos\SadMakaronchi\SummaBarcodeCreater\SettingCutSumma\Addons\SettingCutSumma\SummaMetki.dll"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
 Source: "..\source\repos\SadMakaronchi\SummaBarcodeCreater\SettingCutSumma\Addons\SettingCutSumma\AppUI.xslt"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
+Source: "..\..\..\Program Files\Corel\CorelDRAW Graphics Suite\26\Programs64\Addons\SummaBarcodeCreater\summa_metki.gms"; DestDir: "{code:GetAddonDir}"; Flags: ignoreversion
 
 [Run]
 Filename: "{code:GetAddonDir}\регистрация библиотеки.cmd"
