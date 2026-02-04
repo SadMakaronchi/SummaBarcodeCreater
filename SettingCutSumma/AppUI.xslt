@@ -1,4 +1,4 @@
-﻿<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:frmwrk="Corel Framework Data">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:frmwrk="Corel Framework Data">
 	<xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 	<frmwrk:uiconfig>
 		<frmwrk:applicationInfo userConfiguration="true" />
@@ -32,17 +32,16 @@
 				userCaption="Поставить Метки"
 				userToolTip="Добавляет метки и штрихкод Summa"
 				type="button"
-				enable="true"
-				onInvoke="*Bind(DataSource=Entry;Path=Begin)">
+				dynamicCommand="summa_metki.init.init_metki"
+				dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd">
 			</itemData>
 			<!-- Кнопка настроек -->
 			<itemData guid="311df58a-3407-46c8-880d-fa34554542bc"
 				userCaption="Настройки"
 				userToolTip="Настройки SummaBarcodeCreater"
 				type="button"
-				enable="true"
-				onInvoke="*Bind(DataSource=Entry;Path=Start)">
-
+				dynamicCommand="summa_metki.settings.view"
+				dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd">
 			</itemData>
 
 		</xsl:copy>
@@ -70,7 +69,7 @@
 							flyout="true">
 				<menu>
 					<item guidRef="41a13089-1d92-4b2d-a224-f11daefb7b83"/>
-					
+
 				</menu>
 			</commandBarData>
 
