@@ -65,7 +65,7 @@ namespace SummaMetki
             explt.CurveResolution = 0.0001;
             explt.RemoveHiddenLines = true;
             explt.AutomaticWeld = false;
-            explt.ExcludeWVC = false;
+            explt.ExcludeWVC = true;
             explt.PlotterUnits = 1016;
             explt.PlotterOrigin = 1;   // левый нижний
             explt.Finish();
