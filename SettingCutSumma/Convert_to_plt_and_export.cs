@@ -1,9 +1,12 @@
 ﻿using Corel.Interop.VGCore;
+using SettingCutSumma;
 using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
 using System.Xml.Serialization;
 using static System.Net.WebRequestMethods;
 using corel = Corel.Interop.VGCore;
@@ -36,7 +39,21 @@ namespace SummaMetki
             int over = settings.overcut;
             string smoth;
             string path_plt = settings.path_plt;
-            if (settings.smothing == true)
+            if (Directory.Exists(path_plt) == false)
+            {
+                try
+                {
+                    MessageBox.Show("Отсутствует папка экспорта plt по заданному пути.Она будет создана в процессе экспорта");
+                    Directory.CreateDirectory(path_plt);
+                }
+                catch(Exception ex)
+                {
+                    corelApp.EndDraw();
+                    MessageBox.Show("Ошибка создания папки для экспорта plt файла"+ex);
+                    return;
+                }
+            }
+                if (settings.smothing == true)
             {
                 smoth = "ON";
             }

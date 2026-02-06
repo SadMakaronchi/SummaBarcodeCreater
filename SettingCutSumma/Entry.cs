@@ -150,6 +150,7 @@ namespace SummaMetki
                     catch (UnauthorizedAccessException)
                     {
                         Progress_stop();
+                        corelApp.EndDraw();
                         MessageBox.Show("Нет прав на создание папки для хранения файла с настройками!Пожалуйста запустите CorelDraw с правами администратора");
                         return;
                     }
@@ -164,6 +165,7 @@ namespace SummaMetki
                     catch (Exception ex)
                     {
                         Progress_stop();
+                        corelApp.EndDraw();
                         MessageBox.Show("Ошибка создания файла настроек!" + ex);
                         return;
                     }
@@ -304,7 +306,7 @@ namespace SummaMetki
 
                 ShapeRange Create_OPOS_XY(string n)
                 {
-                    met = metk_sum.CreateRectangle(r.LeftX - zps, r.BottomY - 12.53, r.RightX, r.BottomY - 15.53); // отрисовка нижней метки OPOS_XY
+                    met = metk_sum.CreateRectangle(metk_sum.Shapes.All().LeftX + 13, metk_sum.Shapes.All().BottomY, metk_sum.Shapes.All().RightX - 13, metk_sum.Shapes.All().BottomY + 3); // отрисовка нижней метки OPOS_XY
                     met.Fill.UniformColor.CMYKAssign(0, 0, 0, 100);
                     met.Style.StringAssign(@"{""outline"":{""width"":""0""}}");
                     allShapes.Add(met);

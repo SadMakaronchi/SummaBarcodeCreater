@@ -1,8 +1,10 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using SettingCutSumma;
 using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Shapes;
 using System.Xml.Serialization;
 using corel = Corel.Interop.VGCore;
 using MessageBox = System.Windows.MessageBox;
@@ -91,8 +93,7 @@ namespace SummaMetki
             Overcut.SelectedItem = Overcut.Items.Cast<ComboItems>().First(x => x.Value == settings.overcut);
             Smothing.IsChecked = settings.smothing;
             Barcode2.IsChecked = settings.barc2;
-            fn = settings.path_plt;
-            Path.Text = fn;
+            Path.Text = settings.path_plt;
             Color.Text = string.Join(",", settings.color_name);
             NameDoc.IsChecked = settings.doc_name;
         }
@@ -119,12 +120,22 @@ namespace SummaMetki
         
         public void FolderClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new CommonOpenFileDialog() { IsFolderPicker = true, DefaultDirectory = fn, Title = "Выберите папку для сохранения файла резки в формате plt" };
-            if(dialog.ShowDialog()== CommonFileDialogResult.Ok)
+            
+            if (Directory.Exists(Path.Text) == false)
             {
-                fn = dialog.FileName;
-                Path.Text = fn;
+                MessageBox.Show("Отсутствует папка экспорта plt по заданному пути");
+                Path.Text = @"C:\";
             }
+            
+            var dialog = new CommonOpenFileDialog() { IsFolderPicker = true, InitialDirectory = Path.Text, Title = "Выберите папку для сохранения файла резки в формате plt" };
+                
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    fn = dialog.FileName;
+                    Path.Text = fn;
+                }
+            
+            
         }
 
        
