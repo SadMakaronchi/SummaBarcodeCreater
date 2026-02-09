@@ -207,15 +207,17 @@ namespace SummaMetki
                 Layer metk_g = layers.Find("метки для гильотины");
                 Layer brk = ActPage.CreateLayer("баркод");
                 Layer nmDoc = null;
+                ShapeRange cut = new ShapeRange();
 
                 //ищем контур по имени спотового цвета абриса
                 foreach (string color in settings.color_name)
                 {
-                    ShapeRange cut = corelApp.ActiveDocument.ActivePage.Shapes.FindShapes(Query: "@outline.color.name='" + color + "'");
+                    cut = corelApp.ActiveDocument.ActivePage.Shapes.FindShapes(Query: "@outline.color.name='" + color + "'");
                     cut.MoveToLayer(rzk);
                     foreach (Shape s in cut)
                     {
                         s.Style.StringAssign(@"{""outline"":{""width"":""762""}}");
+                        s.BreakApart();
                     }
                 }
                 if (rzk.Shapes.Count == 0)
@@ -352,8 +354,9 @@ namespace SummaMetki
                             layer.Printable = false;
                         }
                     }
-                    rzk.Shapes.All().Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
-                    rzk.Shapes.All().Combine();
+                    cut = rzk.Shapes.All();
+                    cut.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
+                    cut.All().Combine();
                     rzk.Shapes.All().BreakApart();
                     allShapes.AddRange(rzk.Shapes.All());
                     var convert_plt = new Convert_to_plt_and_export();
