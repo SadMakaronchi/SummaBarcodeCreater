@@ -61,20 +61,21 @@ namespace SummaMetki
             {
                 smoth = "OFF";
             }
-            corelApp.ActiveDocument.Unit = cdrUnit.cdrInch;
-            ShapeRange obj = corelApp.ActiveDocument.ActivePage.Shapes.All();
+            corelApp.ActivePage.SizeHeight = 297; // нормирование страницы, если так не делать иногда корел смещает контур
+            corelApp.ActivePage.SizeWidth = 210;
+            double h = 297 / 25.4;
+            double w = 210 / 25.4;
+            ShapeRange obj = corelApp.ActiveSelectionRange;
             obj.Rotate(270);
-            double minX = obj.LeftX;
-            double minY = obj.BottomY;
-            obj.Move(-minX, -minY);
+            obj.SetPositionEx(cdrReferencePoint.cdrBottomLeft, 0, 0);
             string filename = nbr.ToString() + ".plt";
             path_plt = Path.Combine(path_plt, filename);
-            dynamic explt = corelApp.ActiveDocument.ExportEx(path_plt, cdrFilter.cdrHPGL, cdrExportRange.cdrCurrentPage);
+            dynamic explt = corelApp.ActiveDocument.ExportEx(path_plt, cdrFilter.cdrHPGL, cdrExportRange.cdrSelection);
             explt.PenLibIndex = 0;
             explt.FitToPage = false;
             explt.ScaleFactor = 100;
-            explt.PageWidth = corelApp.ActivePage.SizeWidth ;
-            explt.PageHeight = corelApp.ActivePage.SizeHeight ;
+            explt.PageWidth = w ;
+            explt.PageHeight = h ;
             explt.FillType = 0;
             explt.FillSpacing = 0.005;
             explt.FillAngle = 0;
@@ -86,6 +87,9 @@ namespace SummaMetki
             explt.PlotterUnits = 1016;
             explt.PlotterOrigin = 1;   // левый нижний
             explt.Finish();
+
+            
+           
 
             int mX = int.MaxValue;
             int mY = int.MaxValue;
@@ -107,7 +111,7 @@ namespace SummaMetki
 
             foreach (var l in lines)
             {
-                if (l.StartsWith("PU") || l.StartsWith("PD"))
+                if (l.StartsWith("PU") || l.StartsWith("PD"))           // нормирование координат и исключение лишних комманд
                 {
                     var nums = Regex.Matches(l, @"-?\d+");
                     if (nums.Count >= 2)
@@ -141,7 +145,10 @@ namespace SummaMetki
 
 
 
-           
+
+
+
+
 
             string plt = string.Join(Environment.NewLine,fixedLines);
             
@@ -167,7 +174,7 @@ namespace SummaMetki
                 sw.WriteLine("PG;");
             }
 
-            corelApp.ActiveDocument.Unit = cdrUnit.cdrMillimeter;
+            
 
 
         }

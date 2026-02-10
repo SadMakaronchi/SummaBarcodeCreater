@@ -208,6 +208,7 @@ namespace SummaMetki
                 Layer brk = ActPage.CreateLayer("баркод");
                 Layer nmDoc = null;
                 ShapeRange cut = new ShapeRange();
+              
 
                 //ищем контур по имени спотового цвета абриса
                 foreach (string color in settings.color_name)
@@ -354,11 +355,12 @@ namespace SummaMetki
                             layer.Printable = false;
                         }
                     }
-                    cut = rzk.Shapes.All();
+                    
                     cut.Sort("@shape1.CenterY * 100 - @shape1.CenterX < @shape2.CenterY * 100 - @shape2.CenterX"); // упорядочиваем контуры резки 
                     cut.All().Combine();
-                    rzk.Shapes.All().BreakApart();
+                    cut.BreakApart();
                     allShapes.AddRange(rzk.Shapes.All());
+                    ActPage.Shapes.All().CreateSelection();
                     var convert_plt = new Convert_to_plt_and_export();
                     convert_plt.Init(corelApp);
                     convert_plt.Open_pdf(nbr, n_met, x_dis, y_dis);
