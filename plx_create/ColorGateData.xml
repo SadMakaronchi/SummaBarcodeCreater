@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<CutJobInformation xmlns="urn:schemas-colorgate-com:cutjobinformation">
+	<JobInfo>
+		<Thumbnail Data=""/>
+		<JobName></JobName>
+		<JobUniqueID></JobUniqueID>
+		<CutterID>10002</CutterID>
+		<CutJobID>26091200006</CutJobID>
+		<Printed></Printed>
+		<Created></Created>
+		<MediaName></MediaName>
+		<DriverInfo></DriverInfo>
+	</JobInfo>
+	<PreviewData>
+		<PreviewPage Width="" Height="">
+			<Paths SwappedXY="true" FlippedHorizontal="false" FlippedVertical="true">
+				<Path Name="CutContour" Color="#000000" X="-45.060" Y="-36.000">
+					<Curve Type="Move">
+						<Coordinate X="-1630.525" Y="1096.875"/>
+					</Curve>
+				</Path>
+			</Paths>
+			<Images>
+				<Image Data="">
+					<Position X="-0.000" Y="0.000" Width="1192.036" Height="2958.394"/>
+				</Image>
+			</Images>
+			<Copies>
+				<Position X="0.000" Y="0.000"/>
+			</Copies>
+		</PreviewPage>
+	</PreviewData>
+</CutJobInformation>
