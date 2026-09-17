@@ -5,9 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SummaBarcodeCreater"
         mc:Ignorable="d"
-        Title="Добавление меток и экспорт plt" Height="95" Width="400" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-    <Grid Margin="0,4,0,0">
-        <TextBlock Text="Пожалуйста подождите..." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,-5,0,0"/>
+        Loaded="Window_Loaded" Title="Добавление меток и экспорт plt" Height="95" Width="400" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Colors.xaml"/>
+                <ResourceDictionary Source="Themes/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="0,0,0,0">
+        <TextBlock Text="Пожалуйста подождите..." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5,0,0"/>
         <ProgressBar HorizontalAlignment="Center" Height="25" Margin="0,15,0,0" VerticalAlignment="Center"  Width="360" IsIndeterminate="True"/>
     </Grid>
 </Window>

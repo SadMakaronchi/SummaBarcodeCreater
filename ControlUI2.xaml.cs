@@ -17,14 +17,14 @@ namespace SummaBarcodeCreater
             InitializeComponent();
             try
             {
-                this.corelApp = app as Application;
-                this.corelApp.OnApplicationEvent += CorelApp_OnApplicationEvent;
-                stylesController = new StylesController(this.Resources, this.corelApp);
+                corelApp = app as Application;
+                corelApp.OnApplicationEvent += CorelApp_OnApplicationEvent;
+                stylesController = new StylesController(Resources, corelApp);
 
             }
             catch
             {
-                global::System.Windows.MessageBox.Show("VGCore Erro");
+                MessageBox.Show("VGCore Erro");
             }
 
 
@@ -33,7 +33,7 @@ namespace SummaBarcodeCreater
         {
             if (EventName.Equals("WorkspaceChanged") || EventName.Equals("OnColorSchemeChanged"))
             {
-                var st = new StylesController(this.Resources, this.corelApp);
+                var st = new StylesController(Resources, corelApp);
                 st.LoadThemeFromPreference();
             }
         }

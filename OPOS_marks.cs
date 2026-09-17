@@ -10,6 +10,7 @@ namespace SummaBarcodeCreater
         Shape mark_top;
         Shape mark_bottom;
         ShapeRange marks;
+        double zps;
         public Settings settings;
         public LayerAndSearchContour layerAndSearchContour;
         public Define_per define_per;
@@ -27,23 +28,31 @@ namespace SummaBarcodeCreater
             double b2 = 0;
             if (barc2 == true)
             {
-                b2 = 15.53;
+                b2 = 9.53;
             }
-            metk_y = (int)Math.Ceiling((r.SizeHeight + 15.53 + b2) / 400);
-            step_y = (r.SizeHeight + 15.53 + b2) / metk_y;
+            metk_y = (int)Math.Ceiling((r.SizeHeight + 18.53 + b2) / 400);
+            step_y = (r.SizeHeight + 18.53 + b2) / metk_y;
             if (step_y > 410)
             {
-                metk_y = (int)Math.Ceiling((r.SizeHeight + 15.53 + b2) / 400 + 1);
-                step_y = (r.SizeHeight + 15.53 + b2) / metk_y;
+                metk_y = (int)Math.Ceiling((r.SizeHeight + 18.53 + b2) / 400 + 1);
+                step_y = (r.SizeHeight + 18.53 + b2) / metk_y;
+            }
+            if (r.SizeWidth < 255)
+            {
+                zps = 255 - r.SizeWidth;
+            }
+            else
+            {
+                zps = 0;
             }
 
 
             for (int q = 0; q < metk_y + 1; q++) // отрисовка меток OPOS
             {
                 mark_left = metk_sum.CreateRectangle(
-                                                     r.LeftX - 13, 
+                                                     r.LeftX - 13 - zps, 
                                                      r.BottomY - 12.53 + q * step_y, 
-                                                     r.LeftX - 10, 
+                                                     r.LeftX - 10 - zps, 
                                                      r.BottomY - 15.53 + q * step_y);
                 mark_right = metk_sum.CreateRectangle(
                                                       r.RightX + 13, 

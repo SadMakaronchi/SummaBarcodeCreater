@@ -31,18 +31,18 @@ namespace SummaBarcodeCreater
         }
         public MainWindow(Application app, CommonOpenFileDialog dialog)
         {
+            corelApp = app;
             settings_define = new Settings_define();
             settings = settings_define.Get_settings();
             this.dialog = dialog;
-            this.corelApp = app as corel.Application;
             InitializeComponent();
             try
             {
-                stylesController = new StylesController(this.Resources,this.corelApp);
+                stylesController = new StylesController(Resources,corelApp);
             }
             catch
             {
-                global::System.Windows.MessageBox.Show("VGCore Erro");
+               MessageBox.Show("VGCore Erro");
             }
             for (int vel = 100; vel < 1010; vel += 10)
                     {

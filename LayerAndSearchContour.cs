@@ -1,4 +1,5 @@
 ﻿using Corel.Interop.VGCore;
+using System;
 using System.Windows.Forms;
 using Application = Corel.Interop.VGCore.Application;
 using corel = Corel.Interop.VGCore;
@@ -13,6 +14,7 @@ namespace SummaBarcodeCreater
         public Layer metk_sum;
         public Layer metk_g;
         public Layer brk;
+        public string[] alllayersNames;
         public ShapeRange r;
         public ShapeRange kisscut;
         public Settings settings;
@@ -24,6 +26,7 @@ namespace SummaBarcodeCreater
                 this.corelApp = app;
                 this.r = define_per.allShapes;
                 string[] color_name = settings.color_name;
+                alllayersNames = new string[0];
                 var layers = define_per.ActPage.Layers;
                 define_per.corelDoc.Unit = corel.cdrUnit.cdrMillimeter;
 
@@ -31,10 +34,37 @@ namespace SummaBarcodeCreater
                 rzk = GetOrCreateLayer("резка");
                 metk_sum = GetOrCreateLayer("метки summa");
                 brk = GetOrCreateLayer("баркод");
-
                 define_per.allShapes.MoveToLayer(prnt);
-                //ищем контур по имени спотового цвета абриса
-                foreach (string color in color_name)
+                    var layersToDelete = new System.Collections.Generic.List<Layer>();
+
+                    foreach (Layer lr in layers)
+                    {
+                        bool isPluginLayer = false;
+
+                        foreach (string name in alllayersNames)
+                        {
+                            if (lr.Name == name|| lr.IsGuidesLayer)
+                            {
+                                isPluginLayer = true;
+                                break;
+                            }
+                        }
+
+                        if (!isPluginLayer)
+                        {
+                            layersToDelete.Add(lr);
+                        }
+                    }
+                    foreach (Layer lr in layersToDelete)
+                    {
+                        lr.Delete();
+                    }
+
+
+
+
+            //ищем контур по имени спотового цвета абриса
+            foreach (string color in color_name)
                 {
                     kisscut = define_per.ActPage.Shapes.FindShapes(
                                          Query: "@outline.color.name='" + color + "'");
@@ -43,10 +73,6 @@ namespace SummaBarcodeCreater
                 }
                 if (rzk.Shapes.Count == 0)
                 {
-                    var progress = new Progress_bar();
-                    progress.Progress_stop();
-                    MessageBox.Show("Контур резки не найден!");
-                    define_per.corelDoc.EndCommandGroup();
                     return null;
                 }
                 else
@@ -83,6 +109,8 @@ namespace SummaBarcodeCreater
 
             if (layer == null)
             layer = define_per.ActPage.CreateLayer(name);
+            Array.Resize(ref alllayersNames, alllayersNames.Length + 1);
+            alllayersNames[alllayersNames.Length - 1] = layer.Name;
             return layer;
         }
     }
