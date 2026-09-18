@@ -69,6 +69,7 @@
     <Compile Include="CreateBarcode.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="ExportPlt.cs" />
+    <Compile Include="plx_create\hpglToXmL.cs" />
     <Compile Include="LayerAndSearchContour.cs" />
     <Compile Include="Macros.cs" />
     <Compile Include="MainWindow.xaml.cs">

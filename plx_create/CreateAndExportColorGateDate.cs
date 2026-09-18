@@ -19,10 +19,12 @@ public class CreateAndExportColorGateDate
     public Define_per define_per;
     public LayerAndSearchContour layers;
     public Settings settings;
+    public ExportPlt export_plt;
     public int x;
     public int y;
     public bool rotate;
-    public string Plx(Define_per define_per,LayerAndSearchContour layers,Settings settings,bool rotate)
+    public string hpgl_string;
+    public string Plx(Define_per define_per,LayerAndSearchContour layers,Settings settings,bool rotate,string hpgl)
     {
         this.define_per = define_per;
         this.layers = layers;
@@ -35,6 +37,8 @@ public class CreateAndExportColorGateDate
         base64 = BitmapToBase64();
         define_per.corelDoc.ClearSelection();
         date = DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
+        var curve = HpglToXml.Convert(hpgl);
+        MessageBox.Show(curve.ToString());
         XDocument doc = XDocument.Load(stream);
 
         XNamespace ns = "urn:schemas-colorgate-com:cutjobinformation";
@@ -59,6 +63,26 @@ public class CreateAndExportColorGateDate
                                  .Element(ns + "Images")
                                  .Element(ns + "Image");
                  image.SetAttributeValue("Data", base64);
+
+        XElement curvedat = doc.Root.Element(ns + "PreviewData")
+                                 .Element(ns + "PreviewPage")
+                                 .Element(ns + "Paths")
+                                 .Element(ns + "Path");
+        curvedat.RemoveNodes();
+
+        curvedat.Add(curve.Nodes());
+
+       
+
+        XElement Size = doc.Root.Element(ns + "PreviewData")
+                                .Element(ns + "PreviewPage")
+                                .Element(ns + "Images")
+                                .Element(ns + "Image")
+                                .Element(ns + "Position");
+                 Size.SetAttributeValue("Width", layers.metk_sum.Shapes.All().SizeWidth);
+                 Size.SetAttributeValue("Height", layers.metk_sum.Shapes.All().SizeHeight);
+        
+
 
         // Возвращаем XML в string
         return doc.ToString();

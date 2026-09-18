@@ -1,9 +1,8 @@
 ﻿using Corel.Interop.VGCore;
 using System;
+using System.IO;
 using System.Windows.Forms;
 using Application = Corel.Interop.VGCore.Application;
-using corel = Corel.Interop.VGCore;
-using System.IO;
 
 namespace SummaBarcodeCreater
 {
@@ -22,7 +21,10 @@ namespace SummaBarcodeCreater
         {
             if (app.Documents.Count == 0)
             {
-                DialogResult dialogResult = MessageBox.Show("Нет ни одного открытого документа!", "Добавление меток и экспорт plt",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                DialogResult dialogResult = MessageBox.Show("Нет ни одного открытого документа!",
+                                                            "Добавление меток и экспорт plt",
+                                                            MessageBoxButtons.OK,
+                                                            MessageBoxIcon.Warning);
             }
             else
             {
@@ -42,7 +44,14 @@ namespace SummaBarcodeCreater
                 {
                     define_per.DocName = app.ActiveDocument.Name;
                 }
-                define_per.allShapes = define_per.ActPage.Shapes.All();
+                define_per.allShapes = define_per.corelDoc.CreateShapeRangeFromArray();
+                foreach (Shape s in define_per.ActPage.Shapes.All())
+                {
+                    if (s.Type!=cdrShapeType.cdrGuidelineShape)
+                    {
+                        define_per.allShapes.Add(s);
+                    }
+                }
                 var progress = new Progress_bar(); //запуск прогресс-бара
                 progress.Progress(app);
                 app.Optimization = true;
@@ -54,7 +63,7 @@ namespace SummaBarcodeCreater
                     define_per.corelDoc.Unit = cdrUnit.cdrMillimeter;
                     //тут создаём рабочие слои
                     var LayerAndContour = new LayerAndSearchContour();
-                    LayerAndSearchContour layerAndSearchContour = LayerAndContour.CreateLayer(app, settings, define_per);
+                    LayerAndSearchContour layerAndSearchContour = LayerAndContour.CreateLayer(app, settings, define_per);//создаём слои и распределяем по слоям
                     if (layerAndSearchContour == null)
                     {
                         progress.ShowMessage("Контур резки не найден!");
@@ -65,8 +74,8 @@ namespace SummaBarcodeCreater
                     var numbers = new Numbers();//числа баркода
                     numbers.Calc();
                     var create_barcode = new CreateBarcode();
-                    create_barcode.Create(layerAndSearchContour, numbers, settings, define_per);
-                    var export_plt = new ExportPlt();
+                    create_barcode.Create(layerAndSearchContour, numbers, settings, define_per);//создание баркодов
+                    var export_plt = new ExportPlt();//экспорт
                     export_plt.define_obj(layerAndSearchContour, settings, define_per, numbers, OPOS_marks);
                     define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
                     define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
@@ -77,12 +86,22 @@ namespace SummaBarcodeCreater
                     if (settings.plx == true)
                     {
                         bool rotate = false;
-                        File.WriteAllText((Path.Combine(settings.path_plt, numbers.down_number.ToString() + ".plx")), createPlx.Plx(define_per, LayerAndContour, settings, rotate));
+                        File.WriteAllText((Path.Combine(settings.path_plt, numbers.down_number.ToString() + ".plx")),
+                                                        createPlx.Plx(define_per, 
+                                                                      LayerAndContour, 
+                                                                      settings, 
+                                                                      rotate,
+                                                                      export_plt.plt2));
                     }
                     if (settings.plx == true && settings.barc2 == true)
                     {
                         bool rotate = true;
-                        File.WriteAllText((Path.Combine(settings.path_plt, numbers.up_number.ToString() + ".plx")), createPlx.Plx(define_per, LayerAndContour, settings, rotate));
+                        File.WriteAllText((Path.Combine(settings.path_plt, numbers.up_number.ToString() + ".plx")), 
+                                                        createPlx.Plx(define_per, 
+                                                        LayerAndContour, 
+                                                        settings, 
+                                                        rotate,
+                                                        export_plt.plt1));
                     }
                     app.Optimization = false;
                     app.Refresh();

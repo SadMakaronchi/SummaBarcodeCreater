@@ -12,17 +12,14 @@
 		<DriverInfo></DriverInfo>
 	</JobInfo>
 	<PreviewData>
-		<PreviewPage Width="" Height="">
-			<Paths SwappedXY="true" FlippedHorizontal="false" FlippedVertical="true">
-				<Path Name="CutContour" Color="#000000" X="-45.060" Y="-36.000">
-					<Curve Type="Move">
-						<Coordinate X="-1630.525" Y="1096.875"/>
-					</Curve>
+		<PreviewPage Width="0" Height="0">
+			<Paths SwappedXY="true" FlippedHorizontal="true" FlippedVertical="false">
+				<Path Name="CutContour" Color="#000000" X="0" Y="0">
 				</Path>
 			</Paths>
 			<Images>
 				<Image Data="">
-					<Position X="-0.000" Y="0.000" Width="1192.036" Height="2958.394"/>
+					<Position X="0.000" Y="0.000" Width="" Height=""/>
 				</Image>
 			</Images>
 			<Copies>

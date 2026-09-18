@@ -18,6 +18,8 @@ namespace SummaBarcodeCreater
         public OPOS_marks opos;
         public ShapeRange obj;
         public ShapeRange obj2;
+        public string plt1;
+        public string plt2;
         public void define_obj(LayerAndSearchContour layers, Settings settings, Define_per define_per,Numbers numbers,OPOS_marks opos)
         {
             this.layers = layers;
@@ -37,7 +39,7 @@ namespace SummaBarcodeCreater
             obj.SetPositionEx(cdrReferencePoint.cdrBottomLeft, 0, 0);
             exp(define_per, settings,numbers.down_number.ToString(),h,w);
             obj.Rotate(-270);
-            AddParameterCut(obj, settings, opos, numbers.down_number.ToString());
+            plt1 = AddParameterCut(obj, settings, opos, numbers.down_number.ToString());
             if (settings.barc2 == true)
             {
                 obj2 = layers.rzk.Shapes.All();
@@ -46,7 +48,7 @@ namespace SummaBarcodeCreater
                 obj2.SetPositionEx(cdrReferencePoint.cdrBottomLeft, 0, 0);
                 exp(define_per, settings, numbers.up_number.ToString(),h,w);
                 obj2.Rotate(-90);
-                AddParameterCut(obj, settings, opos, numbers.up_number.ToString());
+                plt2 = AddParameterCut(obj, settings, opos, numbers.up_number.ToString());
                 obj2.CenterX = x;
                 obj2.CenterY = y;
             }
@@ -81,7 +83,7 @@ namespace SummaBarcodeCreater
 
             define_per.corelDoc.ClearSelection();
         }
-        public void AddParameterCut(ShapeRange obj,Settings settings,OPOS_marks opos,string name)
+        public string AddParameterCut(ShapeRange obj,Settings settings,OPOS_marks opos,string name)
         {
             int mX = int.MaxValue;
             int mY = int.MaxValue;
@@ -156,6 +158,7 @@ namespace SummaBarcodeCreater
                 sw.WriteLine(plt);
                 sw.WriteLine("PG;");
             }
+            return plt;
         }
     }
 }
