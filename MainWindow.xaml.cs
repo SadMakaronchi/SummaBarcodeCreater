@@ -180,7 +180,7 @@ namespace SummaBarcodeCreater
             settings.overcut = (int)((decimal)((ComboItems)Overcut.SelectedItem).Value);
             settings.smothing = Smothing.IsChecked == true;
             settings.barc2 = Barcode2.IsChecked == true;
-            settings.path_plt = fn;
+            settings.path_plt = Path.Text;
             settings.color_name = Color.Text.Split(new char[] {','});
             settings.doc_name = NameDoc.IsChecked == true;
             settings.plx = PlxCheck.IsChecked == true;

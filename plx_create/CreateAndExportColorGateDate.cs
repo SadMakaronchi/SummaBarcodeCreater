@@ -32,13 +32,9 @@ public class CreateAndExportColorGateDate
         this.rotate = rotate;
         Assembly assembly = typeof(CreateAndExportColorGateDate).Assembly;
         Stream stream = assembly.GetManifestResourceStream("SummaBarcodeCreater.plx_create.ColorGateData.xml");
-        layers.prnt.Shapes.All().CreateSelection();
-        layers.metk_sum.Shapes.All().AddToSelection();
         base64 = BitmapToBase64();
-        define_per.corelDoc.ClearSelection();
         date = DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
         var curve = HpglToXml.Convert(hpgl);
-        MessageBox.Show(curve.ToString());
         XDocument doc = XDocument.Load(stream);
 
         XNamespace ns = "urn:schemas-colorgate-com:cutjobinformation";
@@ -81,11 +77,22 @@ public class CreateAndExportColorGateDate
                                 .Element(ns + "Position");
                  Size.SetAttributeValue("Width", layers.metk_sum.Shapes.All().SizeWidth);
                  Size.SetAttributeValue("Height", layers.metk_sum.Shapes.All().SizeHeight);
+
+       
+
+            XElement otst2 = doc.Root.Element(ns + "PreviewData")
+                                    .Element(ns + "PreviewPage")
+                                    .Element(ns + "Paths")
+                                    .Element(ns + "Path");
+            otst2.SetAttributeValue("X", - define_per.corelDoc.ActivePage.SizeHeight);
+            otst2.SetAttributeValue("Y", - define_per.corelDoc.ActivePage.SizeWidth);
+        
         
 
 
-        // Возвращаем XML в string
-        return doc.ToString();
+
+            // Возвращаем XML в string
+            return doc.ToString();
     }
 
     public string BitmapToBase64()
@@ -93,18 +100,34 @@ public class CreateAndExportColorGateDate
         string tempFile = Path.Combine(settings.path_plt,"image.jpg");
         try
         {
-            double minStr = Math.Min(define_per.corelDoc.Selection().SizeWidth, define_per.corelDoc.Selection().SizeHeight);
-            if(minStr == define_per.corelDoc.Selection().SizeWidth)
+            double minStr = Math.Min(define_per.corelDoc.ActivePage.SizeWidth, define_per.corelDoc.ActivePage.SizeHeight);
+            if(minStr == define_per.corelDoc.ActivePage.SizeWidth)
             {
                 y = 3000;
-                x = (int)(minStr / define_per.corelDoc.Selection().SizeHeight * 3000);
+                x = (int)(minStr / define_per.corelDoc.ActivePage.SizeHeight * 3000);
             }
             else
             {
                 x = 3000;
-                y = (int)(minStr / define_per.corelDoc.Selection().SizeWidth * 3000);
+                y = (int)(minStr / define_per.corelDoc.ActivePage.SizeWidth * 3000);
             }
-            dynamic exportFilter = define_per.corelDoc.ExportBitmap(tempFile, cdrFilter.cdrJPEG, cdrExportRange.cdrSelection, cdrImageType.cdrRGBColorImage, x, y, 96, 96);
+
+            var exportarea = define_per.corelApp.CreateRect(0, 0, define_per.corelDoc.ActivePage.SizeWidth, define_per.corelDoc.ActivePage.SizeHeight);
+            dynamic exportFilter = define_per.corelDoc.ExportBitmap(tempFile, 
+                                                                    cdrFilter.cdrJPEG, 
+                                                                    cdrExportRange.cdrCurrentPage,
+                                                                    cdrImageType.cdrRGBColorImage,
+                                                                    x, y,
+                                                                    96, 96,
+                                                                    cdrAntiAliasingType.cdrNormalAntiAliasing,
+                                                                    false,
+                                                                    false,
+                                                                    true,
+                                                                    false,
+                                                                    cdrCompressionType.cdrCompressionNone,
+                                                                    null,
+                                                                    exportarea
+                                                                    );
             exportFilter.Finish();
             if (rotate == true)
             {

@@ -35,6 +35,7 @@ namespace SummaBarcodeCreater
                 define_per.corelApp = app;
                 define_per.corelDoc = app.ActiveDocument;
                 define_per.ActPage = app.ActiveDocument.ActivePage;
+                
 
                 if (app.ActiveDocument.Name.Substring(app.ActiveDocument.Name.Length - 4, 4) == ".cdr")
                 {
@@ -79,19 +80,25 @@ namespace SummaBarcodeCreater
                     export_plt.define_obj(layerAndSearchContour, settings, define_per, numbers, OPOS_marks);
                     define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
                     define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
-                    define_per.ActPage.SizeHeight = define_per.allShapes.SizeHeight + settings.up_bleed + settings.down_bleed;
-                    define_per.ActPage.SizeWidth = define_per.allShapes.SizeWidth + settings.right_bleed + settings.left_bleed;
                     layerAndSearchContour.rzk.Printable = false;
                     layerAndSearchContour.rzk.Visible = false;
                     if (settings.plx == true)
                     {
+                        define_per.ActPage.SizeHeight = define_per.allShapes.SizeHeight;
+                        define_per.ActPage.SizeWidth = define_per.allShapes.SizeWidth;
+                        layerAndSearchContour.metk_sum.Printable = false;
+                        layerAndSearchContour.brk.Printable = false;
+                        if (layerAndSearchContour.nmDoc != null)
+                        {
+                            layerAndSearchContour.nmDoc.Printable = false;
+                        }
                         bool rotate = false;
                         File.WriteAllText((Path.Combine(settings.path_plt, numbers.down_number.ToString() + ".plx")),
                                                         createPlx.Plx(define_per, 
                                                                       LayerAndContour, 
                                                                       settings, 
                                                                       rotate,
-                                                                      export_plt.plt2));
+                                                                      export_plt.plt1));
                     }
                     if (settings.plx == true && settings.barc2 == true)
                     {
@@ -101,8 +108,23 @@ namespace SummaBarcodeCreater
                                                         LayerAndContour, 
                                                         settings, 
                                                         rotate,
-                                                        export_plt.plt1));
+                                                        export_plt.plt2));
                     }
+                    else
+                    {
+                        layerAndSearchContour.metk_sum.Printable = true;
+                        layerAndSearchContour.brk.Printable = true;
+                        if (layerAndSearchContour.nmDoc != null)
+                        {
+                            layerAndSearchContour.nmDoc.Printable = true;
+                        }
+                    }
+                    define_per.ActPage.SizeHeight = define_per.allShapes.SizeHeight 
+                                                  + settings.up_bleed 
+                                                  + settings.down_bleed;
+                    define_per.ActPage.SizeWidth = define_per.allShapes.SizeWidth 
+                                                 + settings.left_bleed 
+                                                 + settings.right_bleed;
                     app.Optimization = false;
                     app.Refresh();
                 }

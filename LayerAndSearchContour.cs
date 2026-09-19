@@ -14,6 +14,7 @@ namespace SummaBarcodeCreater
         public Layer metk_sum;
         public Layer metk_g;
         public Layer brk;
+        public Layer nmDoc;
         public string[] alllayersNames;
         public ShapeRange r;
         public ShapeRange kisscut;
@@ -80,7 +81,7 @@ namespace SummaBarcodeCreater
                     //добавляем слой с именем документа, если включена такая настройка
                     if (settings.doc_name == true) //создаём название документа
                     {
-                        Layer nmDoc = define_per.ActPage.CreateLayer("Имя документа");
+                        nmDoc = define_per.ActPage.CreateLayer("Имя документа");
                         Shape nameText = nmDoc.CreateParagraphText(
                             0,
                             12,

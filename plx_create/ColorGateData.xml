@@ -13,8 +13,8 @@
 	</JobInfo>
 	<PreviewData>
 		<PreviewPage Width="0" Height="0">
-			<Paths SwappedXY="true" FlippedHorizontal="true" FlippedVertical="false">
-				<Path Name="CutContour" Color="#000000" X="0" Y="0">
+			<Paths SwappedXY="true" FlippedHorizontal="false" FlippedVertical="true">
+				<Path Name="CutContour" Color="#000000" X="" Y="">
 				</Path>
 			</Paths>
 			<Images>
