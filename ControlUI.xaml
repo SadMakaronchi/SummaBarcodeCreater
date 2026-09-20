@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SummaBarcodeCreater"
-             mc:Ignorable="d" 
-             Height="24" Width="170" MinHeight="24" MaxHeight="24" MaxWidth="170" MinWidth="170" Loaded="Window_Loaded" >
+             mc:Ignorable="d"
+             Loaded="Window_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,17 +14,19 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    
-        <Button Content="Добавить метки и баркоды" Name="btn_Command" Click="StartMacros">
-            <Button.ToolTip>
-                <ToolTip>
-                    <StackPanel>
-                        <Label Content="Кнопка Запуска макроса" FontWeight="Bold" FontSize="12"/>
-                        <Label Content="Запускает макрос, распределяет объекты по слоям и сохраняет готовый файл резки" FontSize="11"/>
-                </StackPanel>
-                </ToolTip>
-            </Button.ToolTip>
-        </Button>
-    
 
+    <Button Content="Добавить метки и баркоды" 
+            Name="btn_Command" 
+            Click="StartMacros"
+            MinWidth="170"
+            MinHeight="24">
+        <Button.ToolTip>
+            <ToolTip>
+                <StackPanel>
+                    <Label Content="Кнопка Запуска макроса" FontWeight="Bold" FontSize="12"/>
+                    <Label Content="Запускает макрос, распределяет объекты по слоям и сохраняет готовый файл резки" FontSize="11"/>
+                </StackPanel>
+            </ToolTip>
+        </Button.ToolTip>
+    </Button>
 </UserControl>

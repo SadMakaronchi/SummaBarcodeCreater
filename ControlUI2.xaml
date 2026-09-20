@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SummaBarcodeCreater"
-             mc:Ignorable="d" 
-             Height="24" Width="100" MaxHeight="24" MaxWidth="100" MinHeight="24" MinWidth="100" Loaded="Window_Loaded">
+             mc:Ignorable="d"
+             Loaded="Window_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,13 +15,17 @@
         </ResourceDictionary>
     </UserControl.Resources>
     
-        <Button Content="Настройки" Name="btn_Command2" Click="Settings" Height="24" Width="100">
+        <Button Content="Настройки" 
+                Name="btn_Command2" 
+                Click="Settings"
+                MinHeight="24" 
+                MinWidth="100">
             <Button.ToolTip>
                 <ToolTip>
                     <StackPanel>
                         <Label Content="Enter Caption" FontWeight="Bold" FontSize="12"/>
                         <Label Content="Click ME!" FontSize="11"/>
-                </StackPanel>
+                    </StackPanel>
                 </ToolTip>
             </Button.ToolTip>
         </Button>

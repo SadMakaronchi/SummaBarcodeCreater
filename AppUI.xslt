@@ -28,13 +28,13 @@
 					  userCaption="Панель добавления меток на макет"
                       enable="true"/>
 			<itemData guid="90d2a1b9-6465-4750-899c-92de213b05d2"
-			   type="wpfhost"
-			   hostedType="Addons\SummaBarcodeCreater\SummaBarcodeCreater.dll,SummaBarcodeCreater.ControlUI"
-			   enable="true"/>
+					  type="wpfhost"
+				      hostedType="Addons\SummaBarcodeCreater\SummaBarcodeCreater.dll,SummaBarcodeCreater.ControlUI"
+					  enable="true"/>
 			<itemData guid="8a42b4c7-3a79-4199-9f00-5c17d86ab719"
-			   type="wpfhost"
-			   hostedType="Addons\SummaBarcodeCreater\SummaBarcodeCreater.dll,SummaBarcodeCreater.ControlUI2"
-			   enable="true"/>
+			          type="wpfhost"
+			          hostedType="Addons\SummaBarcodeCreater\SummaBarcodeCreater.dll,SummaBarcodeCreater.ControlUI2"
+			          enable="true"/>
 
 		</xsl:copy>
 	</xsl:template>
@@ -43,10 +43,8 @@
 		<xsl:copy>
 			<xsl:apply-templates select="node()|@*"/>
 			<commandBarData guid="109fb38b-2059-4b16-8e3c-64a2ac379687"
-							type="toolbar"
 							nonLocalizableName="Панель добавления меток с баркодом для SummaCut"
-							userCaption="Панель добавления меток с баркодом для SummaCut"
-							dock="fill">
+							userCaption="Панель добавления меток с баркодом для SummaCut">
 				<toolbar dock="fill">
 					<item dock="fill" margin="0,0,0,0" guidRef="90d2a1b9-6465-4750-899c-92de213b05d2"/>
 					<item dock="fill" margin="0,0,0,0" guidRef="8a42b4c7-3a79-4199-9f00-5c17d86ab719"/>
