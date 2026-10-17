@@ -110,15 +110,15 @@ namespace SummaBarcodeCreater
                                                         rotate,
                                                         export_plt.plt2));
                     }
-                    else
-                    {
+                    
+                    
                         layerAndSearchContour.metk_sum.Printable = true;
                         layerAndSearchContour.brk.Printable = true;
                         if (layerAndSearchContour.nmDoc != null)
                         {
                             layerAndSearchContour.nmDoc.Printable = true;
                         }
-                    }
+                    
                     define_per.ActPage.SizeHeight = define_per.allShapes.SizeHeight 
                                                   + settings.up_bleed 
                                                   + settings.down_bleed;

@@ -17,13 +17,20 @@ namespace SummaBarcodeCreater
             Settings settings = new Settings();
             if (Directory.Exists(folder) == false)
             {
+                MessageBox.Show("Не найден путь до файла настроек, файл настроек будет создан заново с настройками по-умолчанию",
+                                "Добавление меток и экспорт plt", 
+                                 MessageBoxButtons.OK, 
+                                 MessageBoxIcon.Warning);
                 try
                 {
                     Directory.CreateDirectory(folder);
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    MessageBox.Show("Нет прав на создание папки для хранения файла с настройками!Пожалуйста запустите CorelDraw с правами администратора");
+                    MessageBox.Show("Нет прав на создание папки для хранения файла с настройками!Пожалуйста запустите CorelDraw с правами администратора",
+                                    "Добавление меток и экспорт plt",
+                                     MessageBoxButtons.OK,
+                                     MessageBoxIcon.Warning);
                     return settings;
                 }
                 try
@@ -36,16 +43,55 @@ namespace SummaBarcodeCreater
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка создания файла настроек!" + ex);
+                    MessageBox.Show("Ошибка создания файла настроек!" + ex, 
+                                    "Добавление меток и экспорт plt",
+                                     MessageBoxButtons.OK,
+                                     MessageBoxIcon.Warning);
                     return settings;
                 }
             }
             else
             {
-                using (FileStream fs = File.OpenRead(path_settings))
+                if (File.Exists(path_settings) == true)
                 {
-                    XmlSerializer xsz = new XmlSerializer(typeof(Settings));
-                    settings = (Settings)xsz.Deserialize(fs);
+                    try
+                    {
+                        using (FileStream fs = File.OpenRead(path_settings))
+                        {
+                            XmlSerializer xsz = new XmlSerializer(typeof(Settings));
+                            settings = (Settings)xsz.Deserialize(fs);
+                        }
+                    }
+                    catch 
+                    {
+                        MessageBox.Show("Не найден файл настроек,либо он повреждён или имеет неправильную структуру, файл настроек будет создан заново с настройками по-умолчанию",
+                                    "Добавление меток и экспорт plt",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                        using (FileStream fs = File.Create(path_settings))
+                        {
+                            XmlSerializer xsz = new XmlSerializer(typeof(Settings));
+                            xsz.Serialize(fs, settings);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Не найден файл настроек,либо он повреждён или имеет неправильную структуру, файл настроек будет создан заново с настройками по-умолчанию",
+                                    "Добавление меток и экспорт plt",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                    using (FileStream fs = File.Create(path_settings))
+                    {
+                        XmlSerializer xsz = new XmlSerializer(typeof(Settings));
+                        xsz.Serialize(fs, settings);
+                    }
+
+                    using (FileStream fs = File.OpenRead(path_settings))
+                    {
+                        XmlSerializer xsz = new XmlSerializer(typeof(Settings));
+                        settings = (Settings)xsz.Deserialize(fs);
+                    }
                 }
             }
 
