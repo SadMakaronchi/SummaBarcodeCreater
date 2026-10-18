@@ -2,9 +2,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using Application = Corel.Interop.VGCore.Application;
 using corel = Corel.Interop.VGCore;
@@ -45,6 +47,9 @@ namespace SummaBarcodeCreater
             {
                MessageBox.Show("VGCore Erro");
             }
+
+            Velosity.DropDownClosed += CloseCmbBx;
+            Overcut.DropDownClosed += CloseCmbBx;
             for (int vel = 100; vel < 1010; vel += 10)
                     {
                         Velosity.Items.Add(new ComboItems
@@ -53,6 +58,12 @@ namespace SummaBarcodeCreater
                             pref = vel + " мм/сек"
                         });
                     }
+            Velosity.Items.Add(new ComboItems
+            {
+                Value = -1,
+                pref = "Использовать значение устройства"
+            });
+
             for (int ovr = 1; ovr < 11; ovr++)
             {
                 Overcut.Items.Add(new ComboItems
@@ -61,6 +72,14 @@ namespace SummaBarcodeCreater
                     pref = ovr / 10m + "мм"
                 });
             }
+            Overcut.Items.Add(new ComboItems
+            {
+                Value = -1,
+                pref = "Использовать значение устройства"
+            });
+
+           
+
             //подставляем значения переменных из файла
             Velosity.SelectedItem = Velosity.Items.Cast<ComboItems>().First(x => x.Value == settings.velosity);
             Overcut.SelectedItem = Overcut.Items.Cast<ComboItems>().First(x => x.Value == settings.overcut);
@@ -86,6 +105,28 @@ namespace SummaBarcodeCreater
             RightBleed.GotFocus += BleedChanged;
             RightBleed.LostFocus += BleedChanged;
             RightBleed.PreviewTextInput += Bleed_TextChanged;
+        }
+
+       
+
+        private void CloseCmbBx(object sender,EventArgs e)
+        {
+            ComboBox cb = (ComboBox)sender;
+            var text = new FormattedText(cb.SelectedItem.ToString(),
+            System.Globalization.CultureInfo.CurrentCulture,
+            FlowDirection.LeftToRight,
+            new Typeface(cb.FontFamily, cb.FontStyle,
+                         cb.FontWeight, cb.FontStretch),
+            cb.FontSize,
+            System.Windows.Media.Brushes.Black,
+            VisualTreeHelper.GetDpi(cb).PixelsPerDip);
+            cb.Width = text.Width + 40;
+            if(cb.Width > cb.MinWidth)
+            {
+                this.Width = this.MinWidth + (cb.Width - cb.MinWidth) - cb.MinWidth + 20;
+            }
+           
+
         }
 
         private void Bleed_TextChanged(object sender, TextCompositionEventArgs e)

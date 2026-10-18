@@ -148,8 +148,14 @@ namespace SummaBarcodeCreater
                 sw.WriteLine("SET MARKER_Y_SIZE=120.");
                 sw.WriteLine("SET MARKER_X_N=" + (opos.metk_y + 1) + ".");
                 sw.WriteLine("SET SPECIAL_LOAD=OPOS_XY.");
-                sw.WriteLine("SET VELOCITY=" + settings.velosity + ".");
-                sw.WriteLine("SET OVERCUT=" + settings.overcut + ".");
+                if (settings.velosity != -1)
+                {
+                    sw.WriteLine("SET VELOCITY=" + settings.velosity + ".");
+                }
+                if (settings.overcut != -1)
+                {
+                    sw.WriteLine("SET OVERCUT=" + settings.overcut + ".");
+                }
                 sw.WriteLine("SET SMOOTHING=" + (settings.smothing == true? "ON":"OFF") + ".");
                 sw.WriteLine("LOAD_MARKERS.");
                 sw.WriteLine("END.");

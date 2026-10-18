@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SummaBarcodeCreater"
              mc:Ignorable="d" 
-             Loaded="Window_Loaded" Width="330" Height="540" ResizeMode="NoResize" Title="Настройки файла резки" WindowStartupLocation="CenterScreen" Topmost="True">
+             Loaded="Window_Loaded" MinWidth="330" Width="330" Height="540" ResizeMode="NoResize" Title="Настройки файла резки" WindowStartupLocation="CenterScreen" Topmost="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -19,8 +19,8 @@
 
     <Grid Margin="0,0,0,0">
 
-        <ComboBox Name="Velosity" Width="100" Height="24" Margin="120,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <ComboBox Name="Overcut" Width="100" Height="24" Margin="120,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <ComboBox Name="Velosity" MinWidth="100" Height="24" Margin="120,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <ComboBox Name="Overcut" MinWidth="100" Height="24" Margin="120,50,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <TextBlock Text="Скорость резки" Margin="20,23,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBlock Text="Перерез кривой" Margin="20,54,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBlock Text="Размытие кривой" Margin="45,81,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -31,8 +31,8 @@
         <CheckBox Name="NameDoc" Margin="20,123,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBlock Name="PathCon" Margin="20,165,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Путь сохранения файла резки:"/>
         <TextBox Name="Path" Margin="20,184,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="24" IsEnabled="False"/>
-        <Button Name="PathButton" Margin="0,184,20,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="80" Height="24" Content="Выбрать" Click="FolderClick"/>
-        <Button Name="OK" Margin="0,425,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="287" Height="30" Content="Сохранить настройки" Click="Ok_click"/>
+        <Button Name="PathButton" Margin="0,184,20,0" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="80" Height="24" Content="Выбрать" Click="FolderClick"/>
+        <Button Name="OK" Margin="0,425,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" MinWidth="287" Height="30" Content="Сохранить настройки" Click="Ok_click"/>
         <TextBlock Name="ColorNm" Margin="20,210,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Имена спотовых цветов для поиска контура"/>
         <TextBox Name="Color" Margin="20,228,20,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="270" Height="24"/>
         <TextBlock Name="Bleed" Margin="20,264,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Отступы от меток до края страницы:"/>
