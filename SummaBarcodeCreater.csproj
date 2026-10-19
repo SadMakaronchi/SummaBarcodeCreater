@@ -64,13 +64,13 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControlUI2.xaml.cs">
-      <DependentUpon>ControlUI2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ControlUI.xaml.cs">
+    <Compile Include="CreateBarcode.cs" />
+    <Compile Include="DataSource\BaseDataSource.cs" />
+    <Compile Include="DataSource\ControlUI.xaml.cs">
       <DependentUpon>ControlUI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CreateBarcode.cs" />
+    <Compile Include="DataSource\DataSourceFactory.cs" />
+    <Compile Include="DataSource\SummaBarcodeCreaterDataSource.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="ExportPlt.cs" />
     <Compile Include="plx_create\hpglToXmL.cs" />
@@ -94,11 +94,7 @@
     <Compile Include="Themes\CorelThemeManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ControlUI2.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ControlUI.xaml">
+    <Page Include="DataSource\ControlUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
