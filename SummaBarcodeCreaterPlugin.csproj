@@ -54,6 +54,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+  <Content Include="AppUI.xslt">
+  <Content Include="UserUI.xslt">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
+  <ItemGroup>
     <Compile Include="Start.cs" />
     <Compile Include="Macro.Internal.cs">
       <DependentUpon>Start.cs</DependentUpon>
@@ -75,4 +81,9 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+<Target Name="RenameFile" AfterTargets="Build">
+  <Delete Files="$(TargetDir)$(TargetName).CorelAddon" />
+  <Move SourceFiles="$(TargetPath)"
+        DestinationFiles="$(TargetDir)$(TargetName).CorelAddon" />
+</Target>
 </Project>

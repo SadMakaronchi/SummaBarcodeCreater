@@ -1,18 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using Application = Corel.Interop.VGCore.Application;
 
 namespace SummaBarcodeCreater
 {
     public class Addon
     {
-        public Addon(Application app) 
+        public static Application corelApp;
+        public static IntPtr corelHandle;
+
+        public const string DataSourceName = "SummaBarcodeCreaterDS";
+
+        private readonly DataSourceFactory dataSourceFactory;
+
+        public Addon(Application app)
         {
-            var cmbr =  app.CommandBars.Add("testMenu");
-            var btn = cmbr.Controls.AddCustomButton("e69f024e-30d4-4ed0-86c5-f8615e307eb0", "button");
+            try
+            {
+                corelApp = app;
+
+                if (corelApp == null)
+                {
+                    throw new InvalidOperationException("Corel Application равен null");
+                }
+                    corelHandle = new IntPtr(corelApp.AppWindow.Handle);
+                    dataSourceFactory = new DataSourceFactory(corelApp);
+                    dataSourceFactory.AddDataSource(
+                    DataSourceName, typeof(SummaBarcodeCreaterDataSource));
+                    dataSourceFactory.Register();
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка регистрации DataSource" + ex);
+            }
         }
     }
 }

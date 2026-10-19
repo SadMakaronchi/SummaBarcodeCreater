@@ -13,8 +13,8 @@ namespace SummaBarcodeCreater
         protected Application CorelApp;
         public BaseDataSource(DataSourceProxy proxy, Application corelApp)
         {
-            this.m_AppProxy = proxy;
-            this.CorelApp = corelApp;
+            m_AppProxy = proxy;
+            CorelApp = corelApp;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

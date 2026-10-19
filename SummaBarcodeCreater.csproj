@@ -65,10 +65,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateBarcode.cs" />
+    <Compile Include="DataSource\Addon.cs" />
     <Compile Include="DataSource\BaseDataSource.cs" />
-    <Compile Include="DataSource\ControlUI.xaml.cs">
-      <DependentUpon>ControlUI.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataSource\DataSourceFactory.cs" />
     <Compile Include="DataSource\SummaBarcodeCreaterDataSource.cs" />
     <Compile Include="Entry.cs" />
@@ -94,10 +92,6 @@
     <Compile Include="Themes\CorelThemeManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="DataSource\ControlUI.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -125,11 +119,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="AppUI.xslt">
-      <SubType>Designer</SubType>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="AppUI.xslt" />
     <Resource Include="UserUI.xslt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -141,4 +131,8 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+  <Target Name="RenameFile" AfterTargets="Build">
+    <Delete Files="$(TargetDir)$(TargetName).CorelAddon" />
+    <Move SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir)$(TargetName).CorelAddon" />
+  </Target>
 </Project>

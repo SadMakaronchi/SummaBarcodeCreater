@@ -24,7 +24,7 @@ namespace SummaBarcodeCreater
         {
             foreach (string name in DataSourceList.Keys)
             {
-                bool registred = ControlUI.corelApp.FrameWork.Application.RegisterDataSource(name, this);
+                bool registred = CGS.Addon.corelApp.FrameWork.Application.RegisterDataSource(name, this);
             }
         }
         public void CreateDataSource(string DataSourceName, DataSourceProxy Proxy, out object ppVal)
