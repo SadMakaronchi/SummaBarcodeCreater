@@ -19,8 +19,12 @@ namespace SummaBarcodeCreater
     public partial class MainWindow : Window
     {
         public corel.Application corelApp;
-        public string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel");
-        public string path_settings = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SummaPanel", "SettingsCutSumma.xml");
+        public string folder = System.IO.Path.Combine(Environment.GetFolderPath
+                                                     (Environment.SpecialFolder.ApplicationData), 
+                                                      "SummaPanel");
+        public string path_settings = System.IO.Path.Combine(Environment.GetFolderPath
+                                                            (Environment.SpecialFolder.ApplicationData), 
+                                                            "SummaPanel", "SettingsCutSumma.xml");
         public string fn;
         public Settings settings;
         public Settings_define settings_define;

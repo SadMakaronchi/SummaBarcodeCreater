@@ -71,6 +71,7 @@
     <Compile Include="DataSource\SummaBarcodeCreaterDataSource.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="ExportPlt.cs" />
+    <Compile Include="ExportToPDF.cs" />
     <Compile Include="plx_create\hpglToXmL.cs" />
     <Compile Include="LayerAndSearchContour.cs" />
     <Compile Include="Macros.cs" />

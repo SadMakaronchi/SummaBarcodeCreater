@@ -5,6 +5,7 @@ using Application = Corel.Interop.VGCore.Application;
 
 namespace CGS
 {
+    //этот класс видит корел при загрузке, важно заменить расширение dll на CorelAddon и испоьзовать пространство имён CGS
     public class Addon
     {
         public static Application corelApp;
@@ -18,13 +19,13 @@ namespace CGS
                 corelApp = app;
                 if (corelApp == null)
                 {
-                    throw new InvalidOperationException("Corel Application равен null");
+                    throw new InvalidOperationException("Corel Application равен null"); 
                 }
                 corelHandle = new IntPtr(corelApp.AppWindow.Handle);
                 dataSourceFactory = new DataSourceFactory(corelApp);
                 dataSourceFactory.AddDataSource(
                 DataSourceName,typeof(SummaBarcodeCreaterDataSource));
-                dataSourceFactory.Register();
+                dataSourceFactory.Register(); //регистрация фабрики данных для связывания интерфейса с методами плагина
             }
             catch (Exception ex)
             {

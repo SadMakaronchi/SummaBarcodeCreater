@@ -1,6 +1,5 @@
 ﻿using Corel.Interop.VGCore;
 using System.Runtime.InteropServices;
-using System.Windows;
 using Application = Corel.Interop.VGCore.Application;
 namespace SummaBarcodeCreater
 {
@@ -9,6 +8,7 @@ namespace SummaBarcodeCreater
     [Guid("f9ae43c4-9634-41ac-be3b-9ed3e30bc349")]
     public class SummaBarcodeCreaterDataSource : BaseDataSource
     {
+        //тут потом можно вкорячить строковые имена кнопок и пути для иконок
         public SummaBarcodeCreaterDataSource(DataSourceProxy proxy,
                                Application corelApp)
                              : base(proxy, corelApp)

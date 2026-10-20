@@ -39,7 +39,7 @@ namespace SummaBarcodeCreater
             }
             if (r.SizeWidth < 255)
             {
-                zps = 255 - r.SizeWidth;
+                zps = 255 - r.SizeWidth;//запас на случай слишком маленького по ширине макета
             }
             else
             {
@@ -53,12 +53,12 @@ namespace SummaBarcodeCreater
                                                      r.LeftX - 13 - zps, 
                                                      r.BottomY - 12.53 + q * step_y, 
                                                      r.LeftX - 10 - zps, 
-                                                     r.BottomY - 15.53 + q * step_y);
+                                                     r.BottomY - 15.53 + q * step_y); //левые квадратики
                 mark_right = metk_sum.CreateRectangle(
                                                       r.RightX + 13, 
                                                       r.BottomY - 12.53 + q * step_y, 
                                                       r.RightX + 10, 
-                                                      r.BottomY - 15.53 + q * step_y);
+                                                      r.BottomY - 15.53 + q * step_y); //правые квадратики
             }
             mark_bottom = metk_sum.CreateRectangle(
                                                    metk_sum.Shapes.All().LeftX + 13, 
@@ -75,7 +75,7 @@ namespace SummaBarcodeCreater
             }
             marks = metk_sum.Shapes.All();
             SetMarkStyle(marks);
-            define_per.allShapes.AddRange(marks);
+            define_per.allShapes.AddRange(marks); 
             return this;
         }
 
