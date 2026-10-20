@@ -2,20 +2,20 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Application = Corel.Interop.VGCore.Application;
+using ComboBox = System.Windows.Controls.ComboBox;
 using corel = Corel.Interop.VGCore;
 using MessageBox = System.Windows.MessageBox;
+using TextBox = System.Windows.Controls.TextBox;
 using Window = System.Windows.Window;
 
 namespace SummaBarcodeCreater
 {
-   
+
     public partial class MainWindow : Window
     {
         public corel.Application corelApp;
@@ -41,13 +41,16 @@ namespace SummaBarcodeCreater
             InitializeComponent();
             try
             {
-                stylesController = new StylesController(Resources,corelApp);
+                stylesController = new StylesController(Resources, corelApp);
+
             }
             catch
             {
-               MessageBox.Show("VGCore Erro");
+                MessageBox.Show("VGCore Erro");
             }
-
+            //подписка на события комбобоксов и добавление значений
+            Velosity.Loaded += CloseCmbBx;
+            Overcut.Loaded += CloseCmbBx;
             Velosity.DropDownClosed += CloseCmbBx;
             Overcut.DropDownClosed += CloseCmbBx;
             for (int vel = 100; vel < 1010; vel += 10)
@@ -93,6 +96,7 @@ namespace SummaBarcodeCreater
             DownBleed.Text = settings.down_bleed.ToString() + " мм";
             LeftBleed.Text = settings.left_bleed.ToString() + " мм";
             RightBleed.Text = settings.right_bleed.ToString() + " мм";
+            //подписка на события текстбокса
             UpBleed.GotFocus += BleedChanged;
             UpBleed.LostFocus += BleedChanged;
             UpBleed.PreviewTextInput += Bleed_TextChanged;
@@ -111,22 +115,25 @@ namespace SummaBarcodeCreater
 
         private void CloseCmbBx(object sender,EventArgs e)
         {
-            ComboBox cb = (ComboBox)sender;
+            ComboBox cb = (ComboBox)sender; 
+            double txt = DefineWidthText(cb);
+            cb.Width = Math.Max(cb.MinWidth, txt + 30);
+            double maxComboWidth = Math.Max(Velosity.Width, Overcut.Width);
+            double requiredWidth = 120 + maxComboWidth + 30;
+            this.Width = Math.Max(this.MinWidth, requiredWidth);
+        }
+
+        public double DefineWidthText(ComboBox cb)
+        {
             var text = new FormattedText(cb.SelectedItem.ToString(),
             System.Globalization.CultureInfo.CurrentCulture,
-            FlowDirection.LeftToRight,
+            System.Windows.FlowDirection.LeftToRight,
             new Typeface(cb.FontFamily, cb.FontStyle,
                          cb.FontWeight, cb.FontStretch),
             cb.FontSize,
-            System.Windows.Media.Brushes.Black,
+            Brushes.Black,
             VisualTreeHelper.GetDpi(cb).PixelsPerDip);
-            cb.Width = text.Width + 40;
-            if(cb.Width > cb.MinWidth)
-            {
-                this.Width = this.MinWidth + (cb.Width - cb.MinWidth) - cb.MinWidth + 20;
-            }
-           
-
+            return text.Width;
         }
 
         private void Bleed_TextChanged(object sender, TextCompositionEventArgs e)
@@ -229,7 +236,9 @@ namespace SummaBarcodeCreater
                     XmlSerializer xsz = new XmlSerializer(typeof(Settings));
                     xsz.Serialize(fs, settings);
                 }
-                MessageBox.Show("Настройки резки сохранены!");
+                MessageBox.Show("Настройки резки сохранены!", "Добавление меток и экспорт plt", 
+                                 MessageBoxButton.OK,
+                                 MessageBoxImage.Information);
                 Close();
             }
             catch(Exception ex)
