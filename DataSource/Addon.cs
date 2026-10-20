@@ -9,7 +9,6 @@ namespace CGS
     public class Addon
     {
         public static Application corelApp;
-        public static IntPtr corelHandle;
         public const string DataSourceName = "SummaBarcodeCreaterDS";
         private readonly DataSourceFactory dataSourceFactory;
         public Addon(Application app)
@@ -21,7 +20,6 @@ namespace CGS
                 {
                     throw new InvalidOperationException("Corel Application равен null"); 
                 }
-                corelHandle = new IntPtr(corelApp.AppWindow.Handle);
                 dataSourceFactory = new DataSourceFactory(corelApp);
                 dataSourceFactory.AddDataSource(
                 DataSourceName,typeof(SummaBarcodeCreaterDataSource));

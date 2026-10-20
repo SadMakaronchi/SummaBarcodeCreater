@@ -1,12 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.IO;
+using Application = Corel.Interop.VGCore.Application;
+using Corel.Interop.VGCore;
 namespace SummaBarcodeCreater
 {
-    internal class ExportToPDF
+    public class ExportToPDF
     {
+        public Application corelApp;
+        public Numbers num;
+        public Settings set;
+        public void BeginExport(Application app, Numbers numbers,Settings settings)
+        {
+            corelApp = app;
+            num = numbers;
+            string path = settings.path_plt;
+            string name = Path.Combine(path, numbers.down_number.ToString() + ".pdf");
+            var expt = corelApp.ActiveDocument.ExportEx(name, cdrFilter.cdrPDF, cdrExportRange.cdrSelection);
+        }
     }
 }
