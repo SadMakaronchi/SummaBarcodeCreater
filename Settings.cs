@@ -14,6 +14,7 @@
             public double down_bleed { get; set;} = 25;
             public double left_bleed { get;set; } = 10;
             public double right_bleed { get; set; } = 10;
+            public bool cust_plt { get; set; } = false;
         
     }
 }

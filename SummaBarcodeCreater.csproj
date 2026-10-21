@@ -155,7 +155,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PdfContourExtractor.cs" />
+    <Compile Include="PltToPdfConverter\PdfContourExtractor.cs" />
     <Compile Include="CreateBarcode.cs" />
     <Compile Include="DataSource\Addon.cs" />
     <Compile Include="DataSource\BaseDataSource.cs" />
@@ -163,8 +163,8 @@
     <Compile Include="DataSource\SummaBarcodeCreaterDataSource.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="ExportPlt.cs" />
-    <Compile Include="ExportToPDF.cs" />
-    <Compile Include="PltWriter.cs" />
+    <Compile Include="PltToPdfConverter\ExportToPDF.cs" />
+    <Compile Include="PltToPdfConverter\PltWriter.cs" />
     <Compile Include="plx_create\hpglToXmL.cs" />
     <Compile Include="LayerAndSearchContour.cs" />
     <Compile Include="Macros.cs" />
@@ -217,6 +217,7 @@
     <Resource Include="AppUI.xslt" />
     <Resource Include="UserUI.xslt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

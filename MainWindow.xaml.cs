@@ -94,6 +94,7 @@ namespace SummaBarcodeCreater
             Barcode2.IsChecked = settings.barc2;
             Path.Text = settings.path_plt;
             PlxCheck.IsChecked = settings.plx;
+            CustomPLt.IsChecked = settings.cust_plt;
             Color.Text = string.Join(",", settings.color_name);
             NameDoc.IsChecked = settings.doc_name;
             UpBleed.Text = settings.up_bleed.ToString() + " мм";
@@ -202,6 +203,7 @@ namespace SummaBarcodeCreater
                 settings.color_name = Color.Text.Split(new char[] { ',' });
                 settings.doc_name = NameDoc.IsChecked == true;
                 settings.plx = PlxCheck.IsChecked == true;
+                settings.cust_plt = CustomPLt.IsChecked == true;    
                 if (UpBleed.Text.Contains(" мм") == true)
                 {
                     settings.up_bleed = double.Parse(UpBleed.Text.Substring(0, UpBleed.Text.Length - 3));

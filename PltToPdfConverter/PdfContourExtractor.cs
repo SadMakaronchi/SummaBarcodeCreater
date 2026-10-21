@@ -13,8 +13,7 @@ namespace SummaBarcodeCreater
     {
         public class Contour
         {
-            public List<(double X, double Y)> Points { get; set; }
-                = new List<(double X, double Y)>();
+            public List<(double X, double Y)> Points { get; set; } = new List<(double X, double Y)>();
 
             public bool IsClosed { get; set; }
         }
@@ -23,8 +22,7 @@ namespace SummaBarcodeCreater
         {
             private readonly string spotColorName;
 
-            public List<Contour> Contours { get; } =
-                new List<Contour>();
+            public List<Contour> Contours { get; } = new List<Contour>();
 
             public PathListener(string spotColorName)
             {
@@ -122,15 +120,14 @@ namespace SummaBarcodeCreater
             }
         }
 
-        public static List<Contour> Extract(string pdfPath,string spotColorName,int pageNumber = 1)
+        public static List<Contour> Extract(string pdfPath,string spotColorName,int pageNumber = 1) // этот метод вызываем
         {
             using (var reader = new PdfReader(pdfPath))
             using (var pdf = new PdfDocument(reader))
             {
-                if (pageNumber < 1 ||pageNumber > pdf.GetNumberOfPages())
+                if (pageNumber > pdf.GetNumberOfPages())
                 {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(pageNumber));
+                    throw new ArgumentOutOfRangeException(nameof(pageNumber));
                 }
 
                 var listener = new PathListener(spotColorName);

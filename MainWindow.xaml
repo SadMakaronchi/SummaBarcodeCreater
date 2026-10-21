@@ -29,23 +29,25 @@
         <CheckBox Name="Smothing" Margin="20,83,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <CheckBox Name="Barcode2" Margin="20,103,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <CheckBox Name="NameDoc" Margin="20,123,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <TextBlock Name="PathCon" Margin="20,165,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Путь сохранения файла резки:"/>
-        <TextBox Name="Path" Margin="20,184,105,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="24" IsEnabled="False"/>
-        <Button Name="PathButton" Margin="0,184,20,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="80" Height="24" Content="Выбрать" Click="FolderClick"/>
+        <TextBlock Name="PathCon" Margin="20,185,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Путь сохранения файла резки:"/>
+        <TextBox Name="Path" Margin="20,204,105,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="24" IsEnabled="False"/>
+        <Button Name="PathButton" Margin="0,204,20,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="80" Height="24" Content="Выбрать" Click="FolderClick"/>
         <Button Name="OK" Margin="20,425,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="30" Content="Сохранить настройки" Click="Ok_click"/>
-        <TextBlock Name="ColorNm" Margin="20,210,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Имена спотовых цветов для поиска контура"/>
-        <TextBox Name="Color" Margin="20,228,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="24"/>
-        <TextBlock Name="Bleed" Margin="20,264,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Отступы от меток до края страницы:"/>
-        <TextBlock Name="up" Margin="20,289,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Сверху:"/>
-        <TextBlock Name="down" Margin="20,319,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Снизу:"/>
-        <TextBlock Name="right" Margin="20,349,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Справа:"/>
-        <TextBlock Name="bottom" Margin="20,379,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Слева:"/>
-        <TextBox x:Name="UpBleed" Margin="73,284,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
-        <TextBox x:Name="DownBleed" Margin="73,314,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
-        <TextBox x:Name="RightBleed" Margin="73,344,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
-        <TextBox x:Name="LeftBleed" Margin="73,374,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
-        <TextBlock Text="Создать *plx файл для сервера резки ColorGate" Margin="45,142,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Name="ColorNm" Margin="20,230,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Имена спотовых цветов для поиска контура"/>
+        <TextBox Name="Color" Margin="20,248,20,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="24"/>
+        <TextBlock Name="Bleed" Margin="20,284,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Отступы от меток до края страницы:"/>
+        <TextBlock Name="up" Margin="20,309,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Сверху:"/>
+        <TextBlock Name="down" Margin="20,339,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Снизу:"/>
+        <TextBlock Name="right" Margin="20,369,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Справа:"/>
+        <TextBlock Name="bottom" Margin="20,399,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="Слева:"/>
+        <TextBox x:Name="UpBleed" Margin="73,304,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
+        <TextBox x:Name="DownBleed" Margin="73,334,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
+        <TextBox x:Name="RightBleed" Margin="73,364,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
+        <TextBox x:Name="LeftBleed" Margin="73,394,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
+        <TextBlock Text="Создать *plx файл для сервера резки ColorGate" Margin="45,143,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <CheckBox x:Name="PlxCheck" Margin="20,144,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <CheckBox x:Name="CustomPLt" Margin="20,165,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Text="Использовать встроенный экспорт" Margin="45,164,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 
 

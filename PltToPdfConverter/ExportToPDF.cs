@@ -1,35 +1,33 @@
 ﻿using Corel.Interop.VGCore;
-using iText.Kernel.Pdf;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using static System.Net.WebRequestMethods;
+using System.Windows.Navigation;
 using Application = Corel.Interop.VGCore.Application;
 namespace SummaBarcodeCreater
 {
     public class ExportToPDF
     {
-        private const double HpglUnitsPerMm = 40.0;
-        private const double PointsPerInch = 72.0;
-        private const double MmPerInch = 25.4;
         public Application corelApp;
         public Numbers num;
         public Settings set;
         public Define_per perm;
         public LayerAndSearchContour lrs;
-        public void BeginExport(Application app, Numbers numbers,
+        public string PltOrdered;
+        public double pageWidthPoints;
+        public double pageHeightPoints;
+        public string plt;
+        public string BeginExport(Application app, long numbName,
                                                  Settings settings,
                                                  Define_per define_per,
-                                                 LayerAndSearchContour layers)
+                                                 LayerAndSearchContour layers,
+                                                 OPOS_marks opos,
+                                                 bool rotate)
         {
             corelApp = app;
-            num = numbers;
             perm = define_per;
             lrs = layers;
             string path = settings.path_plt;
-            string name = Path.Combine(path, numbers.down_number.ToString() + ".pdf");
+            string name = Path.Combine(path, numbName.ToString() + ".pdf");
             lrs.metk_sum.Shapes.All().CreateSelection();
             lrs.rzk.Shapes.All().AddToSelection();
             var exprt = perm.corelDoc.PDFSettings;
@@ -90,22 +88,51 @@ namespace SummaBarcodeCreater
             exprt.UsePageBoundingBox = false;
             perm.corelDoc.PublishToPDF(name);
 
-
-            var contours = PdfContourExtractor.Extract(name,"CutContour"); //получение контуров из pdf
-                                                                           // Получаем ширину именно той страницы, которую извлекали.
-            double pageWidthPoints;
-
-            using (var reader = new iText.Kernel.Pdf.PdfReader(name))
-            using (var pdf = new iText.Kernel.Pdf.PdfDocument(reader))
+            foreach (string color in settings.color_name)
             {
-                pageWidthPoints = pdf.GetPage(1).GetPageSize().GetWidth() - 0.7 * 72.0 / 25.4; //ручное вычитание в пунктах из-за приколов корела
+                var contours = PdfContourExtractor.Extract(name, color); //получение контуров из pdf
+                using (var reader = new iText.Kernel.Pdf.PdfReader(name))
+                using (var pdf = new iText.Kernel.Pdf.PdfDocument(reader))
+                {
+                    pageWidthPoints = pdf.GetPage(1).GetPageSize().GetWidth() - 0.7 * 72.0 / 25.4; //ручное вычитание в пунктах из-за приколов корела
+                    pageHeightPoints = pdf.GetPage(1).GetPageSize().GetHeight() - 0.7 * 72.0 / 25.4;
+                }
+                plt = PltWriter.Write(contours, pageWidthPoints, pageHeightPoints, rotate);
+                Order order = new Order();
+               PltOrdered = order.Process(plt.ToString());
             }
 
-            PltWriter.Write(Path.Combine(path, numbers.down_number.ToString() + ".plt"), contours,pageWidthPoints);
+            using (StreamWriter sw = new StreamWriter(Path.Combine(path, numbName.ToString() + ".plt")))
+            {
+                sw.WriteLine("\u001B;@:");
+                sw.WriteLine("SET MARKER_X_DIS=" + (int)Math.Round(opos.step_y / 0.025) + ".");
+                sw.WriteLine("SET MARKER_Y_DIS=" + ((int)Math.Round(pageWidthPoints * 25.4 / 72.0 * 40.0) - 120) + ".");
+                sw.WriteLine("SET MARKER_X_SIZE=120.");
+                sw.WriteLine("SET MARKER_Y_SIZE=120.");
+                sw.WriteLine("SET MARKER_X_N=" + (opos.metk_y + 1) + ".");
+                sw.WriteLine("SET SPECIAL_LOAD=OPOS_XY.");
+                if (settings.velosity != -1)
+                {
+                    sw.WriteLine("SET VELOCITY=" + settings.velosity + ".");
+                }
+                if (settings.overcut != -1)
+                {
+                    sw.WriteLine("SET OVERCUT=" + settings.overcut + ".");
+                }
+                sw.WriteLine("SET SMOOTHING=" + (settings.smothing == true ? "ON" : "OFF") + ".");
+                sw.WriteLine("LOAD_MARKERS.");
+                sw.WriteLine("END.");
+                sw.WriteLine("IN;");
+                sw.WriteLine("PA;");
+                sw.WriteLine(PltOrdered);
+                sw.WriteLine("PG;");
+            }
 
+            File.Delete(name);
+            return PltOrdered;
         }
 
-
+       
 
     }
 }

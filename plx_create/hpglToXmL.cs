@@ -5,18 +5,13 @@ using System.Xml.Linq;
 
 public class HpglToXml
 {
-    // Шаг плоттера в миллиметрах
-    private const double PlotterStep = 0.025;
-
     public static XElement Convert(string hpgl)
     {
         XNamespace ns = "urn:schemas-colorgate-com:cutjobinformation";
 
         XElement curves = new XElement(ns + "Curves");
 
-        MatchCollection matches = Regex.Matches(
-            hpgl,
-            @"(?i)(PD|PU)\s*(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)"
+        MatchCollection matches = Regex.Matches(hpgl,@"(?i)(PD|PU)\s*(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)"
         );
 
         foreach (Match match in matches)

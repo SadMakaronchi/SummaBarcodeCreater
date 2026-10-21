@@ -1,16 +1,17 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SummaBarcodeCreater
 {
     public class Order
     {
-        // ---------------------------------------------------------
-        // Точка PLT
-        // ---------------------------------------------------------
-        private class PltPoint
+        // Одна точка PLT.
+        private struct PltPoint
         {
             public double X;
             public double Y;
@@ -22,332 +23,206 @@ namespace SummaBarcodeCreater
             }
         }
 
-        // ---------------------------------------------------------
-        // Отдельная траектория
-        // ---------------------------------------------------------
+        // Один контур и все его исходные команды.
         private class PltContour
         {
-            public List<string> Commands =
-                new List<string>();
+            public List<string> Commands { get; } = new List<string>();
 
-            public double StartX;
-            public double StartY;
+            public PltPoint Start;
+            public PltPoint End;
 
-            public double MinX;
-            public double MaxX;
-            public double MinY;
-            public double MaxY;
+            public int OriginalIndex;
 
-            public double CenterX
+            public PltContour(int index)
             {
-                get
-                {
-                    return (MinX + MaxX) / 2.0;
-                }
+                OriginalIndex = index;
             }
 
-            public double CenterY
+            public double DistanceSquared(PltPoint point)
             {
-                get
-                {
-                    return (MinY + MaxY) / 2.0;
-                }
+                double dx = Start.X - point.X;
+                double dy = Start.Y - point.Y;
+
+                return dx * dx + dy * dy;
             }
         }
 
-        // ---------------------------------------------------------
-        // Основной метод
-        // ---------------------------------------------------------
+        // Поддерживает команды формата:
+        // PU4194,10499;
+        // PD4200,10500;
+        // PU 4194,10499;
+        private static readonly Regex CoordinateCommand = new Regex(
+            @"^\s*(PU|PD)\s*(-?\d+)\s*,\s*(-?\d+)\s*;\s*$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
+        /// Основной метод.
+        /// Принимает PLT-текст и возвращает контуры,
+        /// отсортированные по ближайшему следующему контуру.
+        /// </summary>
         public string Process(string plt)
         {
-            List<PltContour> contours = Parse(plt);
-
-            List<PltContour> ordered =
-                SortLikeGoSign(contours);
-
-            return BuildPlt(ordered);
+            return Process(plt, 0, 0);
         }
 
-        private string BuildPlt(List<PltContour> contours)
+        /// <summary>
+        /// Позволяет задать начальную позицию ножа.
+        /// По умолчанию используется координата (0, 0).
+        /// </summary>
+        public string Process(string plt, double initialX, double initialY)
         {
-            List<string> lines = new List<string>();
+            if (string.IsNullOrWhiteSpace(plt))
+                return plt;
 
-            foreach (PltContour contour in contours)
-            {
-                foreach (string command in contour.Commands)
-                {
-                    lines.Add(command);
-                }
-            }
+            List<string> prefix;
+            List<PltContour> contours;
 
-            return string.Join(
-                Environment.NewLine,
-                lines);
+            Parse(plt, out prefix, out contours);
+
+            if (contours.Count <= 1)
+                return plt;
+
+            List<PltContour> ordered = SortNearest(
+                contours,
+                new PltPoint(initialX, initialY));
+
+            return BuildOutput(prefix, ordered);
         }
 
-        // ---------------------------------------------------------
-        // Разбор PLT
-        // ---------------------------------------------------------
-        private List<PltContour> Parse(string text)
+        /// <summary>
+        /// Разбирает PLT на команды до первого контура
+        /// и отдельные контуры, начинающиеся с PUx,y;.
+        /// </summary>
+        private void Parse(
+            string plt,
+            out List<string> prefix,
+            out List<PltContour> contours)
         {
-            List<PltContour> result =
-                new List<PltContour>();
+            prefix = new List<string>();
+            contours = new List<PltContour>();
+
+            string[] lines = plt.Split(
+                new[] { "\r\n", "\n", "\r" },
+                StringSplitOptions.None);
 
             PltContour current = null;
 
-            string[] lines = text.Split(
-                new[] { '\r', '\n' },
-                StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string rawLine in lines)
+            foreach (string line in lines)
             {
-                string line = rawLine.Trim();
+                Match match = CoordinateCommand.Match(line);
 
-                if (line.Length == 0)
-                    continue;
+                bool isCoordinateCommand = match.Success;
+                bool isPenUpWithCoordinates =
+                    isCoordinateCommand &&
+                    match.Groups[1].Value.Equals(
+                        "PU",
+                        StringComparison.OrdinalIgnoreCase);
 
-                Match match = Regex.Match(
-                    line,
-                    @"^(PU|PD)\s*(-?\d+(?:[.,]\d+)?)[,\s]+(-?\d+(?:[.,]\d+)?)",
-                    RegexOptions.IgnoreCase);
-
-                if (!match.Success)
-                    continue;
-
-                string command =
-                    match.Groups[1].Value.ToUpper();
-
-                string sx = match.Groups[2].Value
-                    .Replace(',', '.');
-
-                string sy = match.Groups[3].Value
-                    .Replace(',', '.');
-
-                double x = double.Parse(
-                    sx,
-                    CultureInfo.InvariantCulture);
-
-                double y = double.Parse(
-                    sy,
-                    CultureInfo.InvariantCulture);
-
-                // -------------------------------------------------
-                // PU начинает новую траекторию
-                // -------------------------------------------------
-                if (command == "PU")
+                if (isPenUpWithCoordinates)
                 {
-                    if (current != null)
-                    {
-                        result.Add(current);
-                    }
+                    // Каждая PU с координатами начинает новый контур.
+                    current = new PltContour(contours.Count);
 
-                    current = new PltContour();
+                    current.Start = new PltPoint(
+                        ParseCoordinate(match.Groups[2].Value),
+                        ParseCoordinate(match.Groups[3].Value));
 
-                    current.StartX = x;
-                    current.StartY = y;
-
-                    current.MinX = x;
-                    current.MaxX = x;
-
-                    current.MinY = y;
-                    current.MaxY = y;
-
+                    current.End = current.Start;
                     current.Commands.Add(line);
+
+                    contours.Add(current);
+                    continue;
                 }
 
-                // -------------------------------------------------
-                // PD продолжается в текущей траектории
-                // -------------------------------------------------
-                else if (command == "PD")
+                if (current == null)
                 {
-                    if (current == null)
-                        continue;
+                    // Команды до первого контура сохраняем в начале файла.
+                    prefix.Add(line);
+                    continue;
+                }
 
-                    current.Commands.Add(line);
+                current.Commands.Add(line);
 
-                    if (x < current.MinX)
-                        current.MinX = x;
-
-                    if (x > current.MaxX)
-                        current.MaxX = x;
-
-                    if (y < current.MinY)
-                        current.MinY = y;
-
-                    if (y > current.MaxY)
-                        current.MaxY = y;
+                if (isCoordinateCommand &&
+                    match.Groups[1].Value.Equals(
+                        "PD",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    current.End = new PltPoint(
+                        ParseCoordinate(match.Groups[2].Value),
+                        ParseCoordinate(match.Groups[3].Value));
                 }
             }
+        }
 
-            if (current != null)
+        private double ParseCoordinate(string value)
+        {
+            return double.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Жадная сортировка ближайшего соседа.
+        /// На каждом шаге выбирается контур,
+        /// стартовая точка которого ближе всего к текущей позиции.
+        /// </summary>
+        private List<PltContour> SortNearest(
+            List<PltContour> contours,
+            PltPoint initialPosition)
+        {
+            var remaining = new List<PltContour>(contours);
+            var result = new List<PltContour>(contours.Count);
+
+            PltPoint currentPosition = initialPosition;
+
+            while (remaining.Count > 0)
             {
-                result.Add(current);
+                int nearestIndex = 0;
+                double nearestDistance = double.MaxValue;
+
+                for (int i = 0; i < remaining.Count; i++)
+                {
+                    double distance =
+                        remaining[i].DistanceSquared(currentPosition);
+
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                        nearestIndex = i;
+                    }
+                }
+
+                PltContour nearest = remaining[nearestIndex];
+
+                result.Add(nearest);
+                remaining.RemoveAt(nearestIndex);
+
+                // После резки текущая позиция — конец выбранного контура.
+                currentPosition = nearest.End;
             }
 
             return result;
         }
 
-        // ---------------------------------------------------------
-        // Формирование порядка GoSign
-        // ---------------------------------------------------------
-        private List<PltContour> SortLikeGoSign(
-            List<PltContour> contours)
+        /// <summary>
+        /// Собирает PLT обратно, сохраняя команды контуров
+        /// и исходный префикс файла.
+        /// </summary>
+        private string BuildOutput(
+            List<string> prefix,
+            List<PltContour> ordered)
         {
-            List<PltContour> result =
-                new List<PltContour>();
+            var output = new StringBuilder();
 
-            if (contours.Count == 0)
-                return result;
+            foreach (string line in prefix)
+                output.AppendLine(line);
 
-            // -----------------------------------------------------
-            // Определяем расстояние между колонками.
-            //
-            // У нас контуры одного столбца имеют почти одинаковый X.
-            // -----------------------------------------------------
-            double xStep = EstimateXStep(contours);
-
-            // Допуск для объединения в одну колонку.
-            double xTolerance = xStep * 0.35;
-
-            List<List<PltContour>> columns =
-                new List<List<PltContour>>();
-
-            // -----------------------------------------------------
-            // Раскладываем контуры по колонкам
-            // -----------------------------------------------------
-            foreach (PltContour contour in contours)
+            foreach (PltContour contour in ordered)
             {
-                List<PltContour> foundColumn = null;
-
-                foreach (List<PltContour> column in columns)
-                {
-                    if (column.Count == 0)
-                        continue;
-
-                    double columnX =
-                        column[0].CenterX;
-
-                    if (Math.Abs(
-                        columnX - contour.CenterX)
-                        <= xTolerance)
-                    {
-                        foundColumn = column;
-                        break;
-                    }
-                }
-
-                if (foundColumn == null)
-                {
-                    foundColumn =
-                        new List<PltContour>();
-
-                    columns.Add(foundColumn);
-                }
-
-                foundColumn.Add(contour);
+                foreach (string line in contour.Commands)
+                    output.AppendLine(line);
             }
 
-            // -----------------------------------------------------
-            // Колонки слева направо
-            // -----------------------------------------------------
-            columns.Sort(
-                delegate (
-                    List<PltContour> a,
-                    List<PltContour> b)
-                {
-                    return a[0].CenterX
-                        .CompareTo(b[0].CenterX);
-                });
-
-            // -----------------------------------------------------
-            // Змейка GoSign
-            // -----------------------------------------------------
-            for (int i = 0; i < columns.Count; i++)
-            {
-                List<PltContour> column =
-                    columns[i];
-
-                // Сортируем внутри колонки по Y
-                column.Sort(
-                    delegate (
-                        PltContour a,
-                        PltContour b)
-                    {
-                        return a.CenterY
-                            .CompareTo(b.CenterY);
-                    });
-
-                // -------------------------------------------------
-                // 0, 2, 4... колонка
-                // -------------------------------------------------
-                if (i % 2 == 0)
-                {
-                    // снизу вверх
-                    for (int j = 0;
-                         j < column.Count;
-                         j++)
-                    {
-                        result.Add(column[j]);
-                    }
-                }
-                else
-                {
-                    // -------------------------------------------------
-                    // 1, 3, 5... колонка
-                    // -------------------------------------------------
-                    // сверху вниз
-                    for (int j = column.Count - 1;
-                         j >= 0;
-                         j--)
-                    {
-                        result.Add(column[j]);
-                    }
-                }
-            }
-
-            return result;
+            return output.ToString();
         }
-
-        // ---------------------------------------------------------
-        // Оценка расстояния между колонками
-        // ---------------------------------------------------------
-        private double EstimateXStep(
-            List<PltContour> contours)
-        {
-            if (contours.Count < 2)
-                return 100;
-
-            List<double> xs =
-                new List<double>();
-
-            foreach (PltContour contour in contours)
-            {
-                xs.Add(contour.CenterX);
-            }
-
-            xs.Sort();
-
-            double minStep =
-                double.MaxValue;
-
-            for (int i = 1; i < xs.Count; i++)
-            {
-                double step =
-                    xs[i] - xs[i - 1];
-
-                if (step <= 0)
-                    continue;
-
-                if (step < minStep)
-                    minStep = step;
-            }
-
-            if (minStep == double.MaxValue)
-                return 100;
-
-            return minStep;
-        }
-
-        
     }
 }

@@ -2,39 +2,23 @@
 using SummaBarcodeCreater;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
 public static class PltWriter
 {
-    private const double HpglUnitsPerMm = 40.0;
-    private const double MmPerInch = 25.4;
-    private const double PointsPerInch = 72.0;
-
-    /// <summary>
-    /// Сохраняет контуры PDF в файл HPGL/PLT.
-    /// Начало координат — правый нижний угол страницы.
-    /// X плоттера направлен вверх, Y — влево.
-    /// </summary>
-    public static void Write(
-        string outputPath,
-        List<PdfContourExtractor.Contour> contours,
-        double pageWidthPoints)
+    private const double HpglUnitsPerMm = 40.0; //константа единиц плоттера в 1мм(разрешщение резки)
+    private const double MmPerInch = 25.4; //константа перевода из мм в дюймы
+    private const double PointsPerInch = 72.0; //константа перевода из дюймов в пункты
+    public static string Write(List<PdfContourExtractor.Contour> contours,double pageWidthPoints,double pageHeightPoints,bool rotate)
     {
         if (contours == null)
             throw new ArgumentNullException(nameof(contours));
 
         if (pageWidthPoints <= 0)
-            throw new ArgumentOutOfRangeException(
-                nameof(pageWidthPoints));
+            throw new ArgumentOutOfRangeException(nameof(pageWidthPoints));
 
         var plt = new StringBuilder();
-
-        // Инициализация плоттера и абсолютные координаты.
-        plt.AppendLine("IN;");
-        plt.AppendLine("PA;");
-
         foreach (var contour in contours)
         {
             if (contour == null || contour.Points.Count == 0)
@@ -45,14 +29,10 @@ public static class PltWriter
 
             foreach (var point in contour.Points)
             {
-                var converted = ToPlotterCoordinates(
-                    point.X,
-                    point.Y,
-                    pageWidthPoints);
+                var converted = ToPlotterCoordinates(point.X,point.Y,pageWidthPoints,pageHeightPoints,rotate);
 
                 // Не записываем последовательные одинаковые точки.
-                if (points.Count == 0 ||
-                    points[points.Count - 1] != converted)
+                if (points.Count == 0 || points[points.Count - 1] != converted)
                 {
                     points.Add(converted);
                 }
@@ -62,8 +42,7 @@ public static class PltWriter
                 continue;
 
             // Перемещение к началу контура с поднятым ножом.
-            plt.AppendLine(
-                $"PU{points[0].X},{points[0].Y};");
+            plt.AppendLine($"PU{points[0].X} {points[0].Y};");
 
             // Для настоящей резки нужен как минимум один сегмент.
             if (points.Count > 1)
@@ -71,46 +50,42 @@ public static class PltWriter
                 // Опускаем нож и проводим контур.
                 for (int i = 1; i < points.Count; i++)
                 {
-                    plt.AppendLine(
-                        $"PD{points[i].X},{points[i].Y};");
+                    plt.AppendLine($"PD{points[i].X} {points[i].Y};");
                 }
 
                 // Если контур замкнут, возвращаемся в начало,
                 // только если последняя точка ещё не совпадает с первой.
-                if (contour.IsClosed &&
-                    points[points.Count - 1] != points[0])
+                if (contour.IsClosed && points[points.Count - 1] != points[0])
                 {
-                    plt.AppendLine(
-                        $"PD{points[0].X},{points[0].Y};");
+                    plt.AppendLine($"PD{points[0].X} {points[0].Y};");
                 }
             }
 
             // Поднимаем нож перед следующим контуром.
             plt.AppendLine("PU;");
         }
-
-        // ASCII подходит для команд HPGL и числовых координат.
-        File.WriteAllText(
-            outputPath,
-            plt.ToString(),
-            Encoding.ASCII);
+        return plt.ToString();
     }
 
-    private static (int X, int Y) ToPlotterCoordinates(
-        double pdfX,
-        double pdfY,
-        double pageWidthPoints)
+    private static (int X, int Y) ToPlotterCoordinates(double pdfX,
+                                                       double pdfY,
+                                                       double pageWidthPoints,
+                                                       double pageHeightPoints,
+                                                       bool rotate)
     {
-        double scale =
-            HpglUnitsPerMm * MmPerInch / PointsPerInch;
+        double scale = HpglUnitsPerMm * MmPerInch / PointsPerInch;
+
+        if (rotate)
+        {
+            pdfX = pageWidthPoints - pdfX;
+            pdfY = pageHeightPoints - pdfY;
+        }
 
         // PDF: X вправо, Y вверх.
         // Плоттер: X вверх, Y влево.
         // Ноль плоттера находится справа внизу страницы.
         int x = (int)Math.Round(pdfY * scale);
-        int y = (int)Math.Round(
-            (pageWidthPoints - pdfX) * scale);
-
+        int y = (int)Math.Round((pageWidthPoints - pdfX) * scale);
         return (x, y);
     }
 }
