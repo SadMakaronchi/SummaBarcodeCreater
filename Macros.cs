@@ -76,40 +76,42 @@ namespace SummaBarcodeCreater
                     numbers.Calc();
                     var create_barcode = new CreateBarcode();
                     create_barcode.Create(layerAndSearchContour, numbers, settings, define_per);//создание баркодов
-                    var export_plt = new ExportPlt();//экспорт
-                    export_plt.define_obj(layerAndSearchContour, settings, define_per, numbers, OPOS_marks);
-                    define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
-                    define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
-                    layerAndSearchContour.rzk.Printable = false;
-                    layerAndSearchContour.rzk.Visible = false;
-                    if (settings.plx == true)
-                    {
-                        define_per.ActPage.SizeHeight = define_per.allShapes.SizeHeight;
-                        define_per.ActPage.SizeWidth = define_per.allShapes.SizeWidth;
-                        layerAndSearchContour.metk_sum.Printable = false;
-                        layerAndSearchContour.brk.Printable = false;
-                        if (layerAndSearchContour.nmDoc != null)
-                        {
-                            layerAndSearchContour.nmDoc.Printable = false;
-                        }
-                        bool rotate = false;
-                        File.WriteAllText((Path.Combine(settings.path_plt, numbers.down_number.ToString() + ".plx")),
-                                                        createPlx.Plx(define_per, 
-                                                                      LayerAndContour, 
-                                                                      settings, 
-                                                                      rotate,
-                                                                      export_plt.plt1));
-                    }
-                    if (settings.plx == true && settings.barc2 == true)
-                    {
-                        bool rotate = true;
-                        File.WriteAllText((Path.Combine(settings.path_plt, numbers.up_number.ToString() + ".plx")), 
-                                                        createPlx.Plx(define_per, 
-                                                        LayerAndContour, 
-                                                        settings, 
-                                                        rotate,
-                                                        export_plt.plt2));
-                    }
+                    var pdf = new ExportToPDF();
+                    pdf.BeginExport(define_per.corelApp, numbers, settings, define_per, LayerAndContour);
+                    //var export_plt = new ExportPlt();//экспорт
+                    //export_plt.define_obj(layerAndSearchContour, settings, define_per, numbers, OPOS_marks);
+                    //define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
+                    //define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
+                    //layerAndSearchContour.rzk.Printable = false;
+                    //layerAndSearchContour.rzk.Visible = false;
+                    //if (settings.plx == true)
+                    //{
+                    //    define_per.ActPage.SizeHeight = define_per.allShapes.SizeHeight;
+                    //    define_per.ActPage.SizeWidth = define_per.allShapes.SizeWidth;
+                    //    layerAndSearchContour.metk_sum.Printable = false;
+                    //    layerAndSearchContour.brk.Printable = false;
+                    //    if (layerAndSearchContour.nmDoc != null)
+                    //    {
+                    //        layerAndSearchContour.nmDoc.Printable = false;
+                    //    }
+                    //    bool rotate = false;
+                    //    File.WriteAllText((Path.Combine(settings.path_plt, numbers.down_number.ToString() + ".plx")),
+                    //                                    createPlx.Plx(define_per, 
+                    //                                                  LayerAndContour, 
+                    //                                                  settings, 
+                    //                                                  rotate,
+                    //                                                  export_plt.plt1));
+                    //}
+                    //if (settings.plx == true && settings.barc2 == true)
+                    //{
+                    //    bool rotate = true;
+                    //    File.WriteAllText((Path.Combine(settings.path_plt, numbers.up_number.ToString() + ".plx")), 
+                    //                                    createPlx.Plx(define_per, 
+                    //                                    LayerAndContour, 
+                    //                                    settings, 
+                    //                                    rotate,
+                    //                                    export_plt.plt2));
+                    //}
                     
                     
                         layerAndSearchContour.metk_sum.Printable = true;
