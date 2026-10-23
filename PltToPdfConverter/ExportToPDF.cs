@@ -88,48 +88,54 @@ namespace SummaBarcodeCreater
             exprt.UsePageBoundingBox = false;
             perm.corelDoc.PublishToPDF(name);
 
-            foreach (string color in settings.color_name)
+            if (!settings.pdf_contour)
             {
-                var contours = PdfContourExtractor.Extract(name, color); //получение контуров из pdf
-                using (var reader = new iText.Kernel.Pdf.PdfReader(name))
-                using (var pdf = new iText.Kernel.Pdf.PdfDocument(reader))
+                File.Delete(name);
+                foreach (string color in settings.color_name)
                 {
-                    pageWidthPoints = pdf.GetPage(1).GetPageSize().GetWidth() - 0.7 * 72.0 / 25.4; //ручное вычитание в пунктах из-за приколов корела
-                    pageHeightPoints = pdf.GetPage(1).GetPageSize().GetHeight() - 0.7 * 72.0 / 25.4;
+                    var contours = PdfContourExtractor.Extract(name, color); //получение контуров из pdf
+                    using (var reader = new iText.Kernel.Pdf.PdfReader(name))
+                    using (var pdf = new iText.Kernel.Pdf.PdfDocument(reader))
+                    {
+                        pageWidthPoints = pdf.GetPage(1).GetPageSize().GetWidth() - 0.7 * 72.0 / 25.4; //ручное вычитание в пунктах из-за приколов корела
+                        pageHeightPoints = pdf.GetPage(1).GetPageSize().GetHeight() - 0.7 * 72.0 / 25.4;
+                    }
+                    plt = PltWriter.Write(contours, pageWidthPoints, pageHeightPoints, rotate);
+                    Order order = new Order();
+                    PltOrdered = order.Process(plt.ToString());
                 }
-                plt = PltWriter.Write(contours, pageWidthPoints, pageHeightPoints, rotate);
-                Order order = new Order();
-               PltOrdered = order.Process(plt.ToString());
-            }
 
-            using (StreamWriter sw = new StreamWriter(Path.Combine(path, numbName.ToString() + ".plt")))
-            {
-                sw.WriteLine("\u001B;@:");
-                sw.WriteLine("SET MARKER_X_DIS=" + (int)Math.Round(opos.step_y / 0.025) + ".");
-                sw.WriteLine("SET MARKER_Y_DIS=" + ((int)Math.Round(pageWidthPoints * 25.4 / 72.0 * 40.0) - 120) + ".");
-                sw.WriteLine("SET MARKER_X_SIZE=120.");
-                sw.WriteLine("SET MARKER_Y_SIZE=120.");
-                sw.WriteLine("SET MARKER_X_N=" + (opos.metk_y + 1) + ".");
-                sw.WriteLine("SET SPECIAL_LOAD=OPOS_XY.");
-                if (settings.velosity != -1)
+                using (StreamWriter sw = new StreamWriter(Path.Combine(path, numbName.ToString() + ".plt")))
                 {
-                    sw.WriteLine("SET VELOCITY=" + settings.velosity + ".");
+                    sw.WriteLine("\u001B;@:");
+                    sw.WriteLine("SET MARKER_X_DIS=" + (int)Math.Round(opos.step_y / 0.025) + ".");
+                    sw.WriteLine("SET MARKER_Y_DIS=" + ((int)Math.Round(pageWidthPoints * 25.4 / 72.0 * 40.0) - 120) + ".");
+                    sw.WriteLine("SET MARKER_X_SIZE=120.");
+                    sw.WriteLine("SET MARKER_Y_SIZE=120.");
+                    sw.WriteLine("SET MARKER_X_N=" + (opos.metk_y + 1) + ".");
+                    sw.WriteLine("SET SPECIAL_LOAD=OPOS_XY.");
+                    if (settings.velosity != -1)
+                    {
+                        sw.WriteLine("SET VELOCITY=" + settings.velosity + ".");
+                    }
+                    if (settings.overcut != -1)
+                    {
+                        sw.WriteLine("SET OVERCUT=" + settings.overcut + ".");
+                    }
+                    sw.WriteLine("SET SMOOTHING=" + (settings.smothing == true ? "ON" : "OFF") + ".");
+                    sw.WriteLine("LOAD_MARKERS.");
+                    sw.WriteLine("END.");
+                    sw.WriteLine("IN;");
+                    sw.WriteLine("PA;");
+                    sw.WriteLine(PltOrdered);
+                    sw.WriteLine("PG;");
                 }
-                if (settings.overcut != -1)
-                {
-                    sw.WriteLine("SET OVERCUT=" + settings.overcut + ".");
-                }
-                sw.WriteLine("SET SMOOTHING=" + (settings.smothing == true ? "ON" : "OFF") + ".");
-                sw.WriteLine("LOAD_MARKERS.");
-                sw.WriteLine("END.");
-                sw.WriteLine("IN;");
-                sw.WriteLine("PA;");
-                sw.WriteLine(PltOrdered);
-                sw.WriteLine("PG;");
-            }
 
-            File.Delete(name);
-            return PltOrdered;
+                return PltOrdered;
+            }
+            else
+
+                return null;
         }
 
        

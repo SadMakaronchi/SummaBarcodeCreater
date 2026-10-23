@@ -83,19 +83,19 @@ namespace SummaBarcodeCreater
                     if (settings.cust_plt) //свой plt конвертер
                     {
                         var pdf = new ExportToPDF();
-                        hpgl1 = pdf.BeginExport(define_per.corelApp, 
-                                               numbers.down_number,   
-                                               settings, 
-                                               define_per, 
-                                               LayerAndContour, 
+                        hpgl1 = pdf.BeginExport(define_per.corelApp,
+                                               numbers.down_number,
+                                               settings,
+                                               define_per,
+                                               LayerAndContour,
                                                OPOS_marks, rotate = false);
                         if (settings.barc2)
-                        hpgl2 = pdf.BeginExport(define_per.corelApp, 
-                                               numbers.up_number, 
-                                               settings, 
-                                               define_per, 
-                                               LayerAndContour, 
-                                               OPOS_marks, rotate = true);
+                            hpgl2 = pdf.BeginExport(define_per.corelApp,
+                                                   numbers.up_number,
+                                                   settings,
+                                                   define_per,
+                                                   LayerAndContour,
+                                                   OPOS_marks, rotate = true);
                         define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignVCenter);
                         define_per.allShapes.AlignRangeToPage(cdrAlignType.cdrAlignHCenter);
                         layerAndSearchContour.rzk.Printable = false;

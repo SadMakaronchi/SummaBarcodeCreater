@@ -95,12 +95,14 @@ namespace SummaBarcodeCreater
             Path.Text = settings.path_plt;
             PlxCheck.IsChecked = settings.plx;
             CustomPLt.IsChecked = settings.cust_plt;
+            PdfContour.IsChecked = settings.pdf_contour;
             Color.Text = string.Join(",", settings.color_name);
             NameDoc.IsChecked = settings.doc_name;
             UpBleed.Text = settings.up_bleed.ToString() + " мм";
             DownBleed.Text = settings.down_bleed.ToString() + " мм";
             LeftBleed.Text = settings.left_bleed.ToString() + " мм";
             RightBleed.Text = settings.right_bleed.ToString() + " мм";
+            CustomPLt.Click += CustomCheck;
             //подписка на события текстбокса
             UpBleed.GotFocus += BleedChanged;
             UpBleed.LostFocus += BleedChanged;
@@ -183,6 +185,24 @@ namespace SummaBarcodeCreater
           
 
         }
+
+        public void CustomCheck(object sender, RoutedEventArgs e)
+        {
+            if (CustomPLt.IsChecked == false)
+            {
+                PdfContour.IsEnabled = false;
+                PdfContour.IsChecked = false;
+                PdfContourText.Opacity = 0.5;
+                PdfContour.Opacity = 0.5;
+            }
+            else
+            {
+                PdfContour.IsEnabled = true;
+                PdfContourText.Opacity = 1;
+                PdfContour.Opacity = 1;
+            }
+
+        }
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
             stylesController.LoadThemeFromPreference();
@@ -203,7 +223,8 @@ namespace SummaBarcodeCreater
                 settings.color_name = Color.Text.Split(new char[] { ',' });
                 settings.doc_name = NameDoc.IsChecked == true;
                 settings.plx = PlxCheck.IsChecked == true;
-                settings.cust_plt = CustomPLt.IsChecked == true;    
+                settings.cust_plt = CustomPLt.IsChecked == true;
+                settings.pdf_contour = PdfContour.IsChecked == true;
                 if (UpBleed.Text.Contains(" мм") == true)
                 {
                     settings.up_bleed = double.Parse(UpBleed.Text.Substring(0, UpBleed.Text.Length - 3));

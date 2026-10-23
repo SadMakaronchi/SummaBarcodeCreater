@@ -15,6 +15,7 @@
             public double left_bleed { get;set; } = 10;
             public double right_bleed { get; set; } = 10;
             public bool cust_plt { get; set; } = false;
+            public bool pdf_contour { get; set; } = false;
         
     }
 }
