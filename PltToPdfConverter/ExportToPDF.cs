@@ -90,7 +90,6 @@ namespace SummaBarcodeCreater
 
             if (!settings.pdf_contour)
             {
-                File.Delete(name);
                 foreach (string color in settings.color_name)
                 {
                     var contours = PdfContourExtractor.Extract(name, color); //получение контуров из pdf
@@ -129,6 +128,8 @@ namespace SummaBarcodeCreater
                     sw.WriteLine("PA;");
                     sw.WriteLine(PltOrdered);
                     sw.WriteLine("PG;");
+
+                    File.Delete(name);
                 }
 
                 return PltOrdered;
