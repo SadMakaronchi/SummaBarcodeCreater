@@ -35,6 +35,7 @@
 			<itemData guid="8a42b4c7-3a79-4199-9f00-5c17d86ab719"
 			          type="button"
 					  onInvoke="*Bind(DataSource=SummaBarcodeCreaterDS;Path=Settings)"
+					  noBmpOnMenu="true"
 					  caption="Настройки"
 				      enable="true"/>
 
