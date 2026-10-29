@@ -44,7 +44,7 @@
         <TextBox x:Name="DownBleed" Margin="73,342,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
         <TextBox x:Name="RightBleed" Margin="73,372,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
         <TextBox x:Name="LeftBleed" Margin="73,402,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="24"/>
-        <TextBlock Text="Создать *plx файл для сервера резки ColorGate" Margin="45,143,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Name="PlxCheckText" Text="Создать *plx файл для сервера резки ColorGate" Margin="45,143,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <CheckBox x:Name="PlxCheck" Margin="20,144,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <CheckBox x:Name="CustomPLt" Margin="20,165,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBlock Text="Использовать встроенный экспорт" Margin="45,164,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>

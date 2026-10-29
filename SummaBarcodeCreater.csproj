@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\ILRepack.2.0.48\build\ILRepack.props" Condition="Exists('packages\ILRepack.2.0.48\build\ILRepack.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CF5659FD-11FF-408A-867B-B9E163CE528D}</ProjectGuid>
@@ -14,12 +16,14 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TemplateGuid>{8AAFD9D4-608E-49AA-8035-EEB1F6F86213}</TemplateGuid>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Program Files\Corel\CorelDRAW Graphics Suite\27\Programs64\Addons\SummaBarcodeCreater\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files\Corel\CorelDRAW Graphics Suite\27\Programs64\Addons\SummaBarcodeCreater\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -111,7 +115,6 @@
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Design" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Diagnostics.DiagnosticSource.5.0.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
@@ -119,14 +122,12 @@
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Security" />
     <Reference Include="System.Security.AccessControl, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Security.AccessControl.6.0.1\lib\net461\System.Security.AccessControl.dll</HintPath>
     </Reference>
@@ -147,12 +148,9 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PltToPdfConverter\PdfContourExtractor.cs" />
@@ -205,7 +203,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="CorelDrw.addon" />
+    <EmbeddedResource Include="CorelDrw.addon">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -214,8 +214,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="AppUI.xslt" />
-    <Resource Include="UserUI.xslt" />
+    <EmbeddedResource Include="AppUI.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserUI.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody">
+      <Version>6.2.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="ILRepack" Version="2.0.48" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -228,7 +241,51 @@
 	</Target>
 	-->
   <Target Name="RenameFile" AfterTargets="Build">
-    <Delete Files="$(TargetDir)$(TargetName).CorelAddon" />
     <Move SourceFiles="$(TargetPath)" DestinationFiles="$(TargetDir)$(TargetName).CorelAddon" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+
+del /q "$(TargetDir)itext.barcodes.xml" 2&gt;nul
+del /q "$(TargetDir)itext.bouncy-castle-connector.xml" 2&gt;nul
+del /q "$(TargetDir)itext.commons.xml" 2&gt;nul
+del /q "$(TargetDir)itext.forms.xml" 2&gt;nul
+del /q "$(TargetDir)itext.io.xml" 2&gt;nul
+del /q "$(TargetDir)itext.kernel.xml" 2&gt;nul
+del /q "$(TargetDir)itext.layout.xml" 2&gt;nul
+del /q "$(TargetDir)itext.pdfa.xml" 2&gt;nul
+del /q "$(TargetDir)itext.pdfua.xml" 2&gt;nul
+del /q "$(TargetDir)itext.sign.xml" 2&gt;nul
+del /q "$(TargetDir)itext.styledxmlparser.xml" 2&gt;nul
+del /q "$(TargetDir)itext.svg.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Bcl.AsyncInterfaces.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Extensions.DependencyInjection.Abstractions.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Extensions.DependencyInjection.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Extensions.Logging.Abstractions.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Extensions.Logging.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Extensions.Options.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.Extensions.Primitives.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.WindowsAPICodePack.Shell.xml" 2&gt;nul
+del /q "$(TargetDir)Microsoft.WindowsAPICodePack.xml" 2&gt;nul
+del /q "$(TargetDir)Newtonsoft.Json.xml" 2&gt;nul
+del /q "$(TargetDir)System.Buffers.xml" 2&gt;nul
+del /q "$(TargetDir)System.Diagnostics.DiagnosticSource.xml" 2&gt;nul
+del /q "$(TargetDir)System.Memory.xml" 2&gt;nul
+del /q "$(TargetDir)System.Numerics.Vectors.xml" 2&gt;nul
+del /q "$(TargetDir)System.Runtime.CompilerServices.Unsafe.xml" 2&gt;nul
+del /q "$(TargetDir)System.Security.AccessControl.xml" 2&gt;nul
+del /q "$(TargetDir)System.Security.Cryptography.Xml.xml" 2&gt;nul
+del /q "$(TargetDir)System.Security.Principal.Windows.xml" 2&gt;nul
+del /q "$(TargetDir)System.Threading.Tasks.Extensions.xml" 2&gt;nul
+del /q "$(TargetDir)System.ValueTuple.xml" 2&gt;nul
+
+
+</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\ILRepack.2.0.48\build\ILRepack.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.2.0.48\build\ILRepack.props'))" />
   </Target>
 </Project>

@@ -1,8 +1,13 @@
 ﻿using Corel.Interop.VGCore;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Xobject;
 using System;
 using System.IO;
-using System.Windows.Navigation;
 using Application = Corel.Interop.VGCore.Application;
+using Path = System.IO.Path;
+using Rectangle = iText.Kernel.Geom.Rectangle;
+
 namespace SummaBarcodeCreater
 {
     public class ExportToPDF
@@ -30,6 +35,12 @@ namespace SummaBarcodeCreater
             string name = Path.Combine(path, numbName.ToString() + ".pdf");
             lrs.metk_sum.Shapes.All().CreateSelection();
             lrs.rzk.Shapes.All().AddToSelection();
+
+            if (settings.pdf_contour && rotate)
+                opos.mark_bottom.Selected = false;
+            if (settings.pdf_contour && !rotate)
+                opos.mark_top.Selected = false;
+
             var exprt = perm.corelDoc.PDFSettings;
             exprt.PublishRange = pdfExportRange.pdfSelection;
             exprt.PageRange = "1";
@@ -93,8 +104,8 @@ namespace SummaBarcodeCreater
                 foreach (string color in settings.color_name)
                 {
                     var contours = PdfContourExtractor.Extract(name, color); //получение контуров из pdf
-                    using (var reader = new iText.Kernel.Pdf.PdfReader(name))
-                    using (var pdf = new iText.Kernel.Pdf.PdfDocument(reader))
+                    using (var reader = new PdfReader(name))
+                    using (var pdf = new PdfDocument(reader))
                     {
                         pageWidthPoints = pdf.GetPage(1).GetPageSize().GetWidth() - 0.7 * 72.0 / 25.4; //ручное вычитание в пунктах из-за приколов корела
                         pageHeightPoints = pdf.GetPage(1).GetPageSize().GetHeight() - 0.7 * 72.0 / 25.4;
@@ -136,12 +147,58 @@ namespace SummaBarcodeCreater
             }
             else
             {
+                if (rotate)
+                {
+                    string tempName = Path.Combine(path,numbName.ToString() + "_temp.pdf");
+                    RotatePdfContent(name, tempName);
+                    File.Delete(name);
+                    File.Move(tempName, name);
+                }
+
                 return null;
             }
+
+
                 
         }
+        private void RotatePdfContent(string sourcePath, string outputPath)
+        {
+            using (var reader = new PdfReader(sourcePath))
+            using (var sourcePdf = new PdfDocument(reader))
+            using (var writer = new PdfWriter(outputPath))
+            using (var destPdf = new PdfDocument(writer))
+            {
+                PdfPage sourcePage = sourcePdf.GetPage(1);
 
-       
+                Rectangle size = sourcePage.GetPageSize();
+                float width = size.GetWidth();
+                float height = size.GetHeight();
+
+                // Создаём новую страницу исходного размера
+                PdfPage destPage = destPdf.AddNewPage(
+                    new iText.Kernel.Geom.PageSize(width, height)
+                );
+
+                // Копируем содержимое исходной страницы
+                PdfFormXObject form =
+                    sourcePage.CopyAsFormXObject(destPdf);
+
+                // Физически поворачиваем содержимое на 180°
+                PdfCanvas canvas = new PdfCanvas(destPage);
+
+                canvas.AddXObjectWithTransformationMatrix(
+                    form,
+                    -1, 0,
+                     0, -1,
+                     width, height
+                );
+
+                // Поворот задаётся содержимым, не метаданными
+                destPage.SetRotation(0);
+            }
+        }
+
+
 
     }
 }

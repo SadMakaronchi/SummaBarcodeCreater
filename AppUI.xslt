@@ -24,19 +24,19 @@
 					  noBmpOnMenu="true"
 					  type="checkButton"
 					  check="*Toolbar('109fb38b-2059-4b16-8e3c-64a2ac379687')"
-					  dynamicCategory="2cc24a3e-fe24-4708-9a74-9c75406eebcd"
 					  userCaption="Панель добавления меток на макет"
                       enable="true"/>
 			<itemData guid="90d2a1b9-6465-4750-899c-92de213b05d2"
 					  type="button"
 					  onInvoke="*Bind(DataSource=SummaBarcodeCreaterDS;Path=RunMacros)" 
 					  caption="Добавить метки и баркоды"
+					  dynamicCategory="ab489730-8791-45d2-a825-b78bbe0d6a5d"
 					  enable="true"/>
 			<itemData guid="8a42b4c7-3a79-4199-9f00-5c17d86ab719"
 			          type="button"
 					  onInvoke="*Bind(DataSource=SummaBarcodeCreaterDS;Path=Settings)"
-					  noBmpOnMenu="true"
 					  caption="Настройки"
+					  dynamicCategory="ab489730-8791-45d2-a825-b78bbe0d6a5d"
 				      enable="true"/>
 
 		</xsl:copy>

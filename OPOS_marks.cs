@@ -7,8 +7,8 @@ namespace SummaBarcodeCreater
     {
         Shape mark_left;
         Shape mark_right;
-        Shape mark_top;
-        Shape mark_bottom;
+        public Shape mark_top;
+        public Shape mark_bottom;
         ShapeRange marks;
         double zps;
         public Settings settings;

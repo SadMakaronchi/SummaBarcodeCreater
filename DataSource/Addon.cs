@@ -1,7 +1,5 @@
-﻿using Corel.Interop.VGCore;
-using SummaBarcodeCreater;
+﻿using SummaBarcodeCreater;
 using System;
-using System.ComponentModel.Design;
 using System.Windows;
 using Application = Corel.Interop.VGCore.Application;
 
@@ -22,18 +20,11 @@ namespace CGS
                 {
                     throw new InvalidOperationException("Corel Application равен null");
                 }
-                //dataSourceFactory = new DataSourceFactory(corelApp);
-                //dataSourceFactory.AddDataSource(
-                //DataSourceName, typeof(SummaBarcodeCreaterDataSource));
-                //dataSourceFactory.Register(); //регистрация фабрики данных для связывания интерфейса с методами плагина
+                dataSourceFactory = new DataSourceFactory(corelApp);
+                dataSourceFactory.AddDataSource(
+                DataSourceName, typeof(SummaBarcodeCreaterDataSource));
+                dataSourceFactory.Register(); //регистрация фабрики данных для связывания интерфейса с методами плагина
 
-                corelApp.AddPluginCommand("AddBarcode");
-                var cmb = corelApp.CommandBars.Add("SummaBarcodeCreater", Corel.Interop.VGCore.cuiBarPosition.cuiBarFloating);
-                var bt1 = cmb.Controls.AddCustomButton("ab489730-8791-45d2-a825-b78bbe0d6a5d", "AddBarcode");
-                bt1.Caption = "AddBarcode";
-
-                corelApp.OnPluginCommand += CorelApp_OnPluginCommand;
-                corelApp.OnUpdatePluginCommand += CorelApp_OnUpdatePluginCommand;
             }
             catch (Exception ex)
             {
@@ -43,21 +34,5 @@ namespace CGS
 
         }
 
-        private void CorelApp_OnPluginCommand(string commandID)
-        {
-            if (commandID == "AddBarcode")
-            {
-                var entry = new Entry();
-                entry.Begin(corelApp);
-            }
-        }
-
-        private void CorelApp_OnUpdatePluginCommand(string commandID,
-                                                    ref bool enabled,
-                                                    ref cdrCommandCheckState checkedState)
-        {
-            if (commandID == "AddBarcode")
-                enabled = true;
-        }
     }
 }

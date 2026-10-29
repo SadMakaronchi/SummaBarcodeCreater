@@ -103,6 +103,7 @@ namespace SummaBarcodeCreater
             LeftBleed.Text = settings.left_bleed.ToString() + " мм";
             RightBleed.Text = settings.right_bleed.ToString() + " мм";
             CustomPLt.Click += CustomCheck;
+            PdfContour.Click += CustomCheck;
             //подписка на события текстбокса
             UpBleed.GotFocus += BleedChanged;
             UpBleed.LostFocus += BleedChanged;
@@ -200,6 +201,18 @@ namespace SummaBarcodeCreater
                 PdfContour.IsEnabled = true;
                 PdfContourText.Opacity = 1;
                 PdfContour.Opacity = 1;
+            }
+
+            if (PdfContour.IsChecked == true)
+            {
+                PlxCheck.IsEnabled = false;
+                PlxCheck.IsChecked = false;
+                PlxCheckText.Opacity = 0.5;
+            }
+            else
+            {
+                PlxCheck.IsEnabled = true;
+                PlxCheckText.Opacity = 1;
             }
 
         }
